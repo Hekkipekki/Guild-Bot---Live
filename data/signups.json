@@ -1,0 +1,447 @@
+{
+  "1480206359051108464": {
+    "title": "HC Progression - Wednesday",
+    "description": "Raid start 19:30\nSelect class + role, then click your status.",
+    "users": {
+      "141881090913599488": {
+        "class": "Death Knight",
+        "spec": "Blood",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1772979105.5327666
+      }
+    }
+  },
+  "1480206831354908712": {
+    "title": "HC Progression - Wednesday",
+    "description": "Raid start 19:30\nSelect class + role, then click your status.",
+    "users": {
+      "141881090913599488": {
+        "class": "Death Knight",
+        "spec": "Blood",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1772979213.7681527
+      }
+    }
+  },
+  "1480208089528402010": {
+    "title": "HC Progression - Wednesday",
+    "description": "Raid start 19:30\nSelect class + role, then click your status.",
+    "users": {
+      "141881090913599488": {
+        "class": "Warrior",
+        "spec": "",
+        "role": "",
+        "status": "tentative",
+        "timestamp": 1772979520.5877435
+      }
+    }
+  },
+  "1480208499328811301": {
+    "title": "HC Progression - Wednesday",
+    "description": "Raid start 19:30\nSelect class + role, then click your status.",
+    "users": {
+      "141881090913599488": {
+        "class": "Death Knight",
+        "spec": "Blood",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1772979612.2972176
+      }
+    }
+  },
+  "1480208699061698603": {
+    "title": "HC Progression - Wednesday",
+    "description": "Raid start 19:30\nSelect class + role, then click your status.",
+    "users": {
+      "141881090913599488": {
+        "class": "Death Knight",
+        "spec": "",
+        "role": "",
+        "status": "tentative",
+        "timestamp": 1772979662.9101684
+      }
+    }
+  },
+  "1480208870621184052": {
+    "title": "HC Progression - Wednesday",
+    "description": "Raid start 19:30\nSelect class + role, then click your status.",
+    "users": {
+      "141881090913599488": {
+        "class": "Death Knight",
+        "spec": "Blood",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1772979701.341085
+      }
+    }
+  },
+  "1480209365180092436": {
+    "title": "HC Progression - Wednesday",
+    "description": "Raid start 19:30\nSelect class + role, then click your status.",
+    "users": {
+      "141881090913599488": {
+        "class": "Death Knight",
+        "spec": "Blood",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1772979817.7702749
+      }
+    }
+  },
+  "1480211867074035712": {
+    "title": "HC Progression - Wednesday",
+    "description": "Raid start 19:30\nSelect class + spec, then click your status.",
+    "users": {}
+  },
+  "1480212117423390833": {
+    "title": "HC Progression - Wednesday",
+    "description": "Raid start 19:30\nSelect class + spec, then click your status.",
+    "users": {
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1772980475.2524438
+      }
+    }
+  },
+  "1480215183153434665": {
+    "title": "HC Progression - Wednesday",
+    "description": "Raid start 19:30\nClick Set Class/Spec, then choose your status.",
+    "users": {}
+  },
+  "1480224340308918548": {
+    "title": "HC Progression - Wednesday",
+    "description": "Raid start 19:30\nClick Set Class/Spec, then choose your status.",
+    "users": {
+      "141881090913599488": {
+        "class": "Paladin",
+        "spec": "ProtectionPaladin",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1772983394.1528034
+      }
+    }
+  },
+  "1480225798605770874": {
+    "title": "HC Progression - Wednesday",
+    "description": "Raid start 19:30\nClick Set Class/Spec, then choose your status.",
+    "users": {
+      "141881090913599488": {
+        "class": "Warrior",
+        "spec": "ProtectionWarrior",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1772983760.4723902
+      }
+    }
+  },
+  "1480233588409634937": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "date_text": "Wed 11 March 2026",
+    "time_text": "19:30",
+    "countdown_text": "in 3 days",
+    "users": {
+      "141881090913599488": {
+        "class": "Death Knight",
+        "spec": "Blood",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1772985618.112504
+      }
+    }
+  },
+  "1480234882633437359": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "date_text": "Wed 11 March 2026",
+    "time_text": "19:30",
+    "countdown_text": "in 3 days",
+    "users": {
+      "141881090913599488": {
+        "class": "Warrior",
+        "spec": "Fury",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1772986249.593172
+      }
+    }
+  },
+  "1480237129828405288": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "date_text": "Wed 11 March 2026",
+    "time_text": "19:30",
+    "countdown_text": "in 3 days",
+    "users": {
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "status": "late",
+        "timestamp": 1772986536.9244115
+      }
+    }
+  },
+  "1480238386081038507": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "date_text": "Wed 11 March 2026",
+    "time_text": "19:30",
+    "countdown_text": "in 3 days",
+    "users": {}
+  },
+  "1480239192834441258": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "date_text": "Wed 11 March 2026",
+    "time_text": "19:30",
+    "countdown_text": "in 3 days",
+    "users": {}
+  },
+  "1480239300527525999": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "date_text": "Wed 11 March 2026",
+    "time_text": "19:30",
+    "countdown_text": "in 3 days",
+    "users": {
+      "141881090913599488": {
+        "class": "Death Knight",
+        "spec": "Blood",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1772986959.6863291
+      }
+    }
+  },
+  "1480241601681952949": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "users": {}
+  },
+  "1480241779214258233": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "users": {
+      "141881090913599488": {
+        "class": "Paladin",
+        "spec": "Retribution",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1772987598.6827602
+      }
+    }
+  },
+  "1480242495177625630": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "users": {}
+  },
+  "1480242735540604958": {
+    "title": "HC Progression - Sunday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773599400,
+    "users": {}
+  },
+  "1480243727942287440": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "users": {}
+  },
+  "1480243754811261040": {
+    "title": "HC Progression - Sunday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773599400,
+    "users": {
+      "141881090913599488": {
+        "class": "Unknown",
+        "spec": "Unknown",
+        "role": "DPS",
+        "status": "absence",
+        "timestamp": 1772988182.0192413
+      }
+    }
+  },
+  "1480256329502294057": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "users": {}
+  },
+  "1480260059140329523": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "users": {}
+  },
+  "1480260699442647256": {
+    "title": "HC Progression - Sunday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773599400,
+    "users": {
+      "141881090913599488": {
+        "class": "Warrior",
+        "spec": "ProtectionWarrior",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1772992100.5071278
+      }
+    }
+  },
+  "1480261181376561284": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "users": {
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1772992175.454911
+      }
+    }
+  },
+  "1480261932471681094": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "users": {}
+  },
+  "1480263665809887263": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "users": {
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1772992769.2436178
+      }
+    }
+  },
+  "1480264506876629097": {
+    "title": "HC Progression - Sunday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773599400,
+    "users": {
+      "141881090913599488": {
+        "class": "Unknown",
+        "spec": "Unknown",
+        "role": "DPS",
+        "status": "sign",
+        "timestamp": 1772993058.2506158
+      }
+    }
+  },
+  "1480265005059412279": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "users": {
+      "141881090913599488": {
+        "class": "Warrior",
+        "spec": "ProtectionWarrior",
+        "role": "Tank",
+        "status": "absence",
+        "timestamp": 1772993091.2999823
+      }
+    }
+  },
+  "1480265817089249381": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "users": {
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "",
+        "role": "",
+        "status": "tentative",
+        "timestamp": 1772993303.3616896
+      }
+    }
+  },
+  "1480266995487473686": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "users": {
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1772993561.2979987
+      },
+      "321966396864987137": {
+        "class": "Death Knight",
+        "spec": "Blood",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1772994019.683385
+      },
+      "248796420880990208": {
+        "class": "Paladin",
+        "spec": "HolyPaladin",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1772994684.6378574
+      },
+      "369109810311987200": {
+        "class": "Hunter",
+        "spec": "Survival",
+        "role": "Ranged",
+        "status": "absence",
+        "timestamp": 1772994709.7978346
+      },
+      "251004817844076554": {
+        "class": "Druid",
+        "spec": "Feral",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1772994759.2970312
+      },
+      "771806222525267968": {
+        "class": "Rogue",
+        "spec": "",
+        "role": "",
+        "status": "sign",
+        "timestamp": 1773001989.1288393
+      }
+    }
+  }
+}
