@@ -1,5 +1,10 @@
-secrets_local.py
+# Python cache
 __pycache__/
 *.pyc
+
+# Local secrets
+secrets_local.py
+
+# Local runtime data
 data/signups.json
 data/characters.json
