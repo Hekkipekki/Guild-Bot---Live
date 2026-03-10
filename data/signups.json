@@ -33,6 +33,13 @@
       "360": false,
       "120": false,
       "30": false
+    },
+    "missing_signup_reminders_sent": {
+      "2880": true,
+      "1440": true
+    },
+    "signed_player_reminders_sent": {
+      "60": false
     }
   },
   "1480985928985215097": {
@@ -69,6 +76,13 @@
       "360": false,
       "120": false,
       "30": false
+    },
+    "missing_signup_reminders_sent": {
+      "2880": true,
+      "1440": true
+    },
+    "signed_player_reminders_sent": {
+      "60": false
     }
   },
   "1480986860917620747": {
@@ -105,9 +119,16 @@
       "360": false,
       "120": false,
       "30": false
+    },
+    "missing_signup_reminders_sent": {
+      "2880": true,
+      "1440": true
+    },
+    "signed_player_reminders_sent": {
+      "60": false
     }
   },
-  "1480993019673968711": {
+  "1481055584022171759": {
     "title": "HC Progression - Wednesday",
     "description": "Continuation of HC Progress",
     "leader": "Hekkipekki / Rhegaran",
@@ -118,26 +139,8 @@
         "class": "Druid",
         "spec": "Balance",
         "role": "Ranged",
-        "timestamp": 1773167175.4944634,
+        "timestamp": 1773181571.055301,
         "name": "Hekkipekki",
-        "note": "",
-        "status": "absence"
-      },
-      "369109810311987200": {
-        "class": "Hunter",
-        "spec": "Survival",
-        "role": "Ranged",
-        "timestamp": 1773166793.528789,
-        "name": "Maverman",
-        "note": "",
-        "status": "absence"
-      },
-      "321966396864987137": {
-        "class": "Death Knight",
-        "spec": "Blood",
-        "role": "Tank",
-        "timestamp": 1773167097.617004,
-        "name": "Blood Death Knight",
         "note": "",
         "status": "sign"
       }
@@ -154,11 +157,12 @@
       "710915046200574073",
       "248796420880990208"
     ],
-    "reminders_sent": {
-      "1440": true,
-      "360": false,
-      "120": false,
-      "30": false
+    "missing_signup_reminders_sent": {
+      "2880": false,
+      "1440": true
+    },
+    "signed_player_reminders_sent": {
+      "60": false
     }
   }
 }
