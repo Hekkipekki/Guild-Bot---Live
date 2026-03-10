@@ -7,10 +7,8 @@ from logic.unassigned import get_unassigned_players
 
 
 REMINDER_THRESHOLDS = {
+    "2880": "48 hours",
     "1440": "24 hours",
-    "360": "6 hours",
-    "120": "2 hours",
-    "30": "30 minutes",
 }
 
 
@@ -37,7 +35,7 @@ class ReminderCog(commands.Cog):
 
             seconds_left = start_ts - now
 
-            # Skip past raids
+            # Skip raids that already started
             if seconds_left <= 0:
                 continue
 
@@ -45,14 +43,21 @@ class ReminderCog(commands.Cog):
 
             reminders_sent = signup.setdefault(
                 "reminders_sent",
-                {"1440": False, "360": False, "120": False, "30": False},
+                {
+                    "2880": False,  # 48 hours
+                    "1440": False,  # 24 hours
+                },
             )
 
             unassigned_players = get_unassigned_players(signup)
             if not unassigned_players:
                 continue
 
-            for threshold_str, label in REMINDER_THRESHOLDS.items():
+            # Only send the closest unsent reminder for the current time left
+            for threshold_str, label in sorted(
+                REMINDER_THRESHOLDS.items(),
+                key=lambda item: int(item[0])
+            ):
                 threshold = int(threshold_str)
 
                 if minutes_left <= threshold and not reminders_sent.get(threshold_str, False):
@@ -61,11 +66,14 @@ class ReminderCog(commands.Cog):
                         try:
                             channel = await self.bot.fetch_channel(channel_id)
                         except Exception:
-                            continue
+                            channel = None
+
+                    if channel is None:
+                        continue
 
                     mentions = "\n".join(f"<@{user_id}>" for user_id in unassigned_players)
-
                     title = signup.get("title", "Raid")
+
                     await channel.send(
                         f"⏰ **Raid reminder — {label} remaining**\n"
                         f"**{title}** starts <t:{start_ts}:R>\n\n"
@@ -74,6 +82,7 @@ class ReminderCog(commands.Cog):
 
                     reminders_sent[threshold_str] = True
                     changed = True
+                    break
 
         if changed:
             save_signups(data)

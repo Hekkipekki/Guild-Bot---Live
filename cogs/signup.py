@@ -154,10 +154,8 @@ class SignupCommands(commands.Cog):
                 for player_id in getattr(config, "DEFAULT_EXPECTED_PLAYERS", [])
             ],
             "reminders_sent": {
-                "1440": False,  # 24 hours
-                "360": False,   # 6 hours
-                "120": False,   # 2 hours
-                "30": False,    # 30 minutes
+                "2880": False, #48 hours
+                "1440": False, #24 hours
             },
         }
 
@@ -226,10 +224,8 @@ class SignupCommands(commands.Cog):
                 for player_id in getattr(config, "DEFAULT_EXPECTED_PLAYERS", [])
             ],
             "reminders_sent": {
-                "1440": False,
-                "360": False,
-                "120": False,
-                "30": False,
+                "2880": False, #48 hours
+                "1440": False, #24 hours
             },
         }
 

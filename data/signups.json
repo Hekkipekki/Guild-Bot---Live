@@ -29,7 +29,7 @@
       "248796420880990208"
     ],
     "reminders_sent": {
-      "1440": false,
+      "1440": true,
       "360": false,
       "120": false,
       "30": false
@@ -65,7 +65,7 @@
       "248796420880990208"
     ],
     "reminders_sent": {
-      "1440": false,
+      "1440": true,
       "360": false,
       "120": false,
       "30": false
@@ -101,7 +101,61 @@
       "248796420880990208"
     ],
     "reminders_sent": {
-      "1440": false,
+      "1440": true,
+      "360": false,
+      "120": false,
+      "30": false
+    }
+  },
+  "1480993019673968711": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "channel_id": 1480191818229350532,
+    "users": {
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "timestamp": 1773167175.4944634,
+        "name": "Hekkipekki",
+        "note": "",
+        "status": "absence"
+      },
+      "369109810311987200": {
+        "class": "Hunter",
+        "spec": "Survival",
+        "role": "Ranged",
+        "timestamp": 1773166793.528789,
+        "name": "Maverman",
+        "note": "",
+        "status": "absence"
+      },
+      "321966396864987137": {
+        "class": "Death Knight",
+        "spec": "Blood",
+        "role": "Tank",
+        "timestamp": 1773167097.617004,
+        "name": "Blood Death Knight",
+        "note": "",
+        "status": "sign"
+      }
+    },
+    "expected_players": [
+      "141881090913599488",
+      "771806222525267968",
+      "251004817844076554",
+      "260495039686246400",
+      "321966396864987137",
+      "369109810311987200",
+      "239532428073500672",
+      "344496860855009280",
+      "710915046200574073",
+      "248796420880990208"
+    ],
+    "reminders_sent": {
+      "1440": true,
       "360": false,
       "120": false,
       "30": false
