@@ -32,7 +32,7 @@ def next_weekday(weekday: int, hour: int, minute: int) -> int:
         hour=hour,
         minute=minute,
         second=0,
-        microsecond=0
+        microsecond=0,
     )
 
     return int(event_time.timestamp())
@@ -43,7 +43,7 @@ FAKE_NAMES = [
     "Frostzug", "Moonbeef", "Sneakstab", "Pyroblastz", "Soulrot",
     "Mendrina", "Bearjuice", "Shockbot", "Arrowqt", "Smitey",
     "Hexella", "Clawbert", "Shieldbro", "Dotsdot", "Windbonk",
-    "Holytoast", "Darkmoo", "Stonepaw", "Critlord", "Glimmer"
+    "Holytoast", "Darkmoo", "Stonepaw", "Critlord", "Glimmer",
 ]
 
 
@@ -100,9 +100,9 @@ def build_fake_users() -> dict:
     selected_dps = random.sample(dps, k=dps_count)
 
     selected_players = (
-        [("sign", p) for p in selected_tanks] +
-        [("sign", p) for p in selected_healers] +
-        [("sign", p) for p in selected_dps]
+        [("sign", p) for p in selected_tanks]
+        + [("sign", p) for p in selected_healers]
+        + [("sign", p) for p in selected_dps]
     )
 
     extra_statuses = ["late", "tentative", "absence", "bench"]
@@ -153,9 +153,12 @@ class SignupCommands(commands.Cog):
                 str(player_id)
                 for player_id in getattr(config, "DEFAULT_EXPECTED_PLAYERS", [])
             ],
-            "reminders_sent": {
-                "2880": False, #48 hours
-                "1440": False, #24 hours
+            "missing_signup_reminders_sent": {
+                "2880": False,  # 48 hours
+                "1440": False,  # 24 hours
+            },
+            "signed_player_reminders_sent": {
+                "60": False,  # 1 hour
             },
         }
 
@@ -223,9 +226,12 @@ class SignupCommands(commands.Cog):
                 str(player_id)
                 for player_id in getattr(config, "DEFAULT_EXPECTED_PLAYERS", [])
             ],
-            "reminders_sent": {
-                "2880": False, #48 hours
-                "1440": False, #24 hours
+            "missing_signup_reminders_sent": {
+                "2880": False,  # 48 hours
+                "1440": False,  # 24 hours
+            },
+            "signed_player_reminders_sent": {
+                "60": False,  # 1 hour
             },
         }
 

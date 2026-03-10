@@ -6,9 +6,13 @@ from data.signup_store import load_signups, save_signups
 from logic.unassigned import get_unassigned_players
 
 
-REMINDER_THRESHOLDS = {
+MISSING_SIGNUP_THRESHOLDS = {
     "2880": "48 hours",
     "1440": "24 hours",
+}
+
+SIGNED_PLAYER_THRESHOLDS = {
+    "60": "1 hour",
 }
 
 
@@ -41,48 +45,91 @@ class ReminderCog(commands.Cog):
 
             minutes_left = seconds_left // 60
 
-            reminders_sent = signup.setdefault(
-                "reminders_sent",
+            channel = self.bot.get_channel(channel_id)
+            if channel is None:
+                try:
+                    channel = await self.bot.fetch_channel(channel_id)
+                except Exception:
+                    continue
+
+            missing_reminders_sent = signup.setdefault(
+                "missing_signup_reminders_sent",
                 {
                     "2880": False,  # 48 hours
                     "1440": False,  # 24 hours
                 },
             )
 
+            signed_reminders_sent = signup.setdefault(
+                "signed_player_reminders_sent",
+                {
+                    "60": False,  # 1 hour
+                },
+            )
+
+            title = signup.get("title", "Raid")
+
+            # --------------------------------------------------
+            # 1) Missing signup reminders
+            # --------------------------------------------------
             unassigned_players = get_unassigned_players(signup)
-            if not unassigned_players:
-                continue
 
-            # Only send the closest unsent reminder for the current time left
-            for threshold_str, label in sorted(
-                REMINDER_THRESHOLDS.items(),
-                key=lambda item: int(item[0])
-            ):
-                threshold = int(threshold_str)
+            if unassigned_players:
+                for threshold_str, label in sorted(
+                    MISSING_SIGNUP_THRESHOLDS.items(),
+                    key=lambda item: int(item[0])
+                ):
+                    threshold = int(threshold_str)
 
-                if minutes_left <= threshold and not reminders_sent.get(threshold_str, False):
-                    channel = self.bot.get_channel(channel_id)
-                    if channel is None:
-                        try:
-                            channel = await self.bot.fetch_channel(channel_id)
-                        except Exception:
-                            channel = None
+                    if (
+                        minutes_left <= threshold
+                        and not missing_reminders_sent.get(threshold_str, False)
+                    ):
+                        mentions = "\n".join(f"<@{user_id}>" for user_id in unassigned_players)
 
-                    if channel is None:
-                        continue
+                        await channel.send(
+                            f"⏰ **Raid reminder — {label} remaining**\n"
+                            f"**{title}** starts <t:{start_ts}:R>\n\n"
+                            f"Still missing signup from:\n{mentions}"
+                        )
 
-                    mentions = "\n".join(f"<@{user_id}>" for user_id in unassigned_players)
-                    title = signup.get("title", "Raid")
+                        missing_reminders_sent[threshold_str] = True
+                        changed = True
+                        break
 
-                    await channel.send(
-                        f"⏰ **Raid reminder — {label} remaining**\n"
-                        f"**{title}** starts <t:{start_ts}:R>\n\n"
-                        f"Still missing signup from:\n{mentions}"
-                    )
+            # --------------------------------------------------
+            # 2) Signed player reminder
+            # --------------------------------------------------
+            users = signup.get("users", {})
+            signed_players = [
+                user_id
+                for user_id, info in users.items()
+                if info.get("status") == "sign"
+            ]
 
-                    reminders_sent[threshold_str] = True
-                    changed = True
-                    break
+            if signed_players:
+                for threshold_str, label in sorted(
+                    SIGNED_PLAYER_THRESHOLDS.items(),
+                    key=lambda item: int(item[0])
+                ):
+                    threshold = int(threshold_str)
+
+                    if (
+                        minutes_left <= threshold
+                        and not signed_reminders_sent.get(threshold_str, False)
+                    ):
+                        mentions = " ".join(f"<@{user_id}>" for user_id in signed_players)
+
+                        await channel.send(
+                            f"⏰ **Raid starts in {label}**\n"
+                            f"{mentions}\n\n"
+                            f"**{title}** starts <t:{start_ts}:R>\n"
+                            f"Don't forget to check your bonus rolls, consumables, and your gear before raid starts — we don't want to lose any time."
+                        )
+
+                        signed_reminders_sent[threshold_str] = True
+                        changed = True
+                        break
 
         if changed:
             save_signups(data)
