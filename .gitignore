@@ -1,0 +1,8 @@
+BASE_DIR = Path(__file__).resolve().parent
+
+try:
+    from secrets_local import TOKEN
+except ImportError:
+    TOKEN = None
+
+WEAKAURAS_CHANNEL_ID = 1423733790907306005

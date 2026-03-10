@@ -7,7 +7,6 @@ from data.signup_store import load_signups
 from views.raidpack_views import RaidPackView
 from views.signup_views import SignupView
 
-
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -34,6 +33,12 @@ async def on_ready():
     print(f"Logged in as {bot.user}")
 
 
+@bot.event
+async def on_command_error(ctx, error):
+    print(f"Command error: {error}")
+    await ctx.send(f"Command error: {error}")
+
+
 @bot.command()
 async def specicons(ctx):
     lines = [f'"{e.name}": "{str(e)}",' for e in ctx.guild.emojis]
@@ -47,6 +52,7 @@ async def main():
     async with bot:
         await bot.load_extension("cogs.wa_commands")
         await bot.load_extension("cogs.signup")
+        await bot.load_extension("cogs.reminders")
         await bot.start(config.TOKEN)
 
 

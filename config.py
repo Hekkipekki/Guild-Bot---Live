@@ -2,8 +2,10 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 
-TOKEN = "MTQ0NzY0NjUxMjgxNjQ1NTk0Mg.GFKPTK.hJ198ZaicCW3Qjj4eRDrMJ1r_2kSb6sV7py4yI"  # put your bot token here
-WEAKAURAS_CHANNEL_ID = 1423733790907306005
+try:
+    from secrets_local import TOKEN
+except ImportError:
+    TOKEN = None
 
 PACKS = {
     "tot_01_06": {
@@ -136,21 +138,21 @@ ROLE_LIMITS = {
 }
 
 SPEC_EMOJIS = {
-    "Blood": "<:Blood:1480262449713385514>",
+    "Blood": "<:Blood:1480344499506122853>",
     "Frost": "<:Frost:1480262252316856470>",
     "Unholy": "<:Unholy:1480262445695238276>",
 
     "Arms": "<:Arms:1480262401281753119>",
     "Fury": "<:Fury:1480262411973033984>",
-    "ProtectionWarrior": "<:ProtectionWarrior:1480262388639993967>",
+    "ProtectionWarrior": "<:ProtectionWarrior:1480343025711321188>",
 
     "Balance": "<:Balance:1480262444000477245>",
     "Feral": "<:Feral:1480262440313946285>",
-    "Guardian": "<:Guardian:1480262442067165215>",
+    "Guardian": "<:Guardian:1480344496091955451>",
     "RestorationDruid": "<:RestorationDruid:1480262438736892075>",
 
     "HolyPaladin": "<:HolyPaladin:1480262327034052761>",
-    "ProtectionPaladin": "<:ProtectionPaladin:1480262329684721807>",
+    "ProtectionPaladin": "<:ProtectionPaladin:1480344497799037208>",
     "Retribution": "<:Retribution:1480262333275181199>",
 
     "Brewmaster": "<:Brewmaster:1480262251033268365>",
@@ -173,13 +175,27 @@ SPEC_EMOJIS = {
     "Marksmanship": "<:Marksmanship:1480262453563494612>",
     "Survival": "<:Survival:1480262455711105188>",
 
-    "Assassination": "<:Assassination:1480262257726512248>",
+    "Assassination": "<:Assassination:1480262257765122248>",
     "Combat": "<:Combat:1480262256540254464>",
     "Subtlety": "<:Subtlety:1480262260029915288>",
 
     "Elemental": "<:Elemental:1480262394990301396>",
     "Enhancement": "<:Enhancement:1480262393014653061>",
     "RestorationShaman": "<:RestorationShaman:1480262390586015814>",
+}
+
+CLASS_EMOJIS = {
+    "Death Knight": "<:DEATHKNIGHT:1480948586010116187>",
+    "Warrior": "<:WARRIOR:1480948654582792262>",
+    "Druid": "<:DRUID:1480948657451696239>",
+    "Paladin": "<:PALADIN:1480948645896523850>",
+    "Monk": "<:MONK:1480953684413387024>", 
+    "Priest": "<:PRIEST:1480948647532302549>",
+    "Mage": "<:MAGE:1480948656097071399>",
+    "Warlock": "<:WARLOCK:1480948652762464358>",
+    "Hunter": "<:HUNTER:1480948644155756676>",
+    "Rogue": "<:ROGUE:1480948648891383879>",
+    "Shaman": "<:SHAMAN:1480948650971627682>",
 }
 
 SUMMARY_EMOJIS = {
@@ -204,3 +220,16 @@ BUTTON_EMOJIS = {
     "config": "<:Config:1480262049270333442>",
     "leave": "<:Leave:1480262053632540682>",
 }
+
+DEFAULT_EXPECTED_PLAYERS = [
+    141881090913599488, # Hekkipekki
+    771806222525267968, # Shadé
+    251004817844076554, # Magemil
+    260495039686246400, # Raitila
+    321966396864987137, # Rajensen
+    369109810311987200, # Maverinkel
+    239532428073500672, # Darkpreacha
+    344496860855009280, # Lenef
+    710915046200574073, # MistaProfessa
+    248796420880990208, # Turit   
+]

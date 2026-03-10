@@ -1,0 +1,54 @@
+{
+    "141881090913599488": [
+        {
+            "name": "BrumBrum",
+            "class": "Druid",
+            "spec": "Guardian",
+            "role": "Tank"
+        },
+        {
+            "name": "test123",
+            "class": "Monk",
+            "spec": "Brewmaster",
+            "role": "Tank"
+        },
+        {
+            "name": "Arms Warrior",
+            "class": "Warrior",
+            "spec": "Arms",
+            "role": "Melee"
+        }
+    ],
+    "248796420880990208": [
+        {
+            "name": "Fury Warrior",
+            "class": "Warrior",
+            "spec": "Fury",
+            "role": "Melee"
+        },
+        {
+            "name": "Hurr Durr",
+            "class": "Druid",
+            "spec": "RestorationDruid",
+            "role": "Healer"
+        },
+        {
+            "name": "Turitpala",
+            "class": "Paladin",
+            "spec": "HolyPaladin",
+            "role": "Healer"
+        },
+        {
+            "name": "Turit",
+            "class": "Monk",
+            "spec": "Mistweaver",
+            "role": "Healer"
+        },
+        {
+            "name": "Magemil",
+            "class": "Mage",
+            "spec": "Frost",
+            "role": "Ranged"
+        }
+    ]
+}
