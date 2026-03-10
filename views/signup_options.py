@@ -20,9 +20,25 @@ AUTO_DELETE_SECONDS = 45
 
 
 async def delete_ephemeral_after(interaction: discord.Interaction, seconds: int = AUTO_DELETE_SECONDS):
+    """
+    Deletes the ORIGINAL interaction response.
+    Only use this when the original response is the ephemeral message itself.
+    """
     try:
         await asyncio.sleep(seconds)
         await interaction.delete_original_response()
+    except Exception:
+        pass
+
+
+async def delete_followup_message_after(message, seconds: int = AUTO_DELETE_SECONDS):
+    """
+    Deletes a FOLLOWUP ephemeral/webhook message returned by interaction.followup.send(..., wait=True).
+    Safe for temporary ephemeral followups.
+    """
+    try:
+        await asyncio.sleep(seconds)
+        await message.delete()
     except Exception:
         pass
 
@@ -288,8 +304,6 @@ class EditSpecButton(discord.ui.Button):
             embed=None,
             view=EditSpecView(self.raid_id, self.user_id, selected_class),
         )
-
-        asyncio.create_task(delete_ephemeral_after(interaction))
 
 
 class EditNoteButton(discord.ui.Button):

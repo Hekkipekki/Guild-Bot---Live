@@ -1,26 +1,89 @@
 {
-  "1480968742300029049": {
+  "1480983235931537421": {
     "title": "HC Progression - Wednesday",
     "description": "Continuation of HC Progress",
     "leader": "Hekkipekki / Rhegaran",
     "start_ts": 1773253800,
     "channel_id": 1480191818229350532,
     "users": {
-      "248796420880990208": {
-        "class": "Mage",
-        "spec": "Frost",
-        "role": "Ranged",
-        "timestamp": 1773161350.6597717,
-        "name": "Magemil",
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Guardian",
+        "role": "Tank",
+        "timestamp": 1773164323.093039,
+        "name": "BrumBrum",
         "note": "",
         "status": "sign"
-      },
+      }
+    },
+    "expected_players": [
+      "141881090913599488",
+      "771806222525267968",
+      "251004817844076554",
+      "260495039686246400",
+      "321966396864987137",
+      "369109810311987200",
+      "239532428073500672",
+      "344496860855009280",
+      "710915046200574073",
+      "248796420880990208"
+    ],
+    "reminders_sent": {
+      "1440": false,
+      "360": false,
+      "120": false,
+      "30": false
+    }
+  },
+  "1480985928985215097": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "channel_id": 1480191818229350532,
+    "users": {
       "141881090913599488": {
-        "class": "Warrior",
-        "spec": "Arms",
-        "role": "Melee",
-        "timestamp": 1773161898.6765153,
-        "name": "Arms Warrior",
+        "class": "Druid",
+        "spec": "Guardian",
+        "role": "Tank",
+        "timestamp": 1773164965.5107863,
+        "name": "BrumBrum",
+        "note": "",
+        "status": "sign"
+      }
+    },
+    "expected_players": [
+      "141881090913599488",
+      "771806222525267968",
+      "251004817844076554",
+      "260495039686246400",
+      "321966396864987137",
+      "369109810311987200",
+      "239532428073500672",
+      "344496860855009280",
+      "710915046200574073",
+      "248796420880990208"
+    ],
+    "reminders_sent": {
+      "1440": false,
+      "360": false,
+      "120": false,
+      "30": false
+    }
+  },
+  "1480986860917620747": {
+    "title": "HC Progression - Wednesday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773253800,
+    "channel_id": 1480191818229350532,
+    "users": {
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Guardian",
+        "role": "Tank",
+        "timestamp": 1773165225.8469968,
+        "name": "BrumBrum",
         "note": "",
         "status": "sign"
       }

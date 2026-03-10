@@ -11,6 +11,7 @@ from views.signup_options import (
     build_signup_options_embed,
     get_signup_entry,
     delete_ephemeral_after,
+    delete_followup_message_after,
 )
 
 
@@ -129,19 +130,21 @@ class ClassDropdown(discord.ui.Select):
 
                 entry = get_signup_entry(int(self.raid_id), str(interaction.user.id))
                 if not entry:
-                    await interaction.followup.send(
+                    msg = await interaction.followup.send(
                         "⚠ Signed up, but could not load signup options.",
                         ephemeral=True,
+                        wait=True,
                     )
-                    asyncio.create_task(delete_ephemeral_after(interaction, 10))
+                    asyncio.create_task(delete_followup_message_after(msg, 10))
                     return
 
-                await interaction.followup.send(
+                msg = await interaction.followup.send(
                     embed=build_signup_options_embed(entry),
                     view=SignupOptionsView(int(self.raid_id), interaction.user.id),
                     ephemeral=True,
+                    wait=True,
                 )
-                asyncio.create_task(delete_ephemeral_after(interaction, 45))
+                asyncio.create_task(delete_followup_message_after(msg, 45))
                 return
 
             # No saved character -> open spec picker directly
@@ -159,11 +162,12 @@ class ClassDropdown(discord.ui.Select):
 
         except Exception as e:
             if interaction.response.is_done():
-                await interaction.followup.send(
+                msg = await interaction.followup.send(
                     f"⚠ Class select failed: `{type(e).__name__}: {e}`",
                     ephemeral=True,
+                    wait=True,
                 )
-                asyncio.create_task(delete_ephemeral_after(interaction, 10))
+                asyncio.create_task(delete_followup_message_after(msg, 10))
             else:
                 await interaction.response.send_message(
                     f"⚠ Class select failed: `{type(e).__name__}: {e}`",
