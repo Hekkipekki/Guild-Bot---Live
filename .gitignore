@@ -1,8 +1,5 @@
-BASE_DIR = Path(__file__).resolve().parent
-
-try:
-    from secrets_local import TOKEN
-except ImportError:
-    TOKEN = None
-
-WEAKAURAS_CHANNEL_ID = 1423733790907306005
+secrets_local.py
+__pycache__/
+*.pyc
+data/signups.json
+data/characters.json
