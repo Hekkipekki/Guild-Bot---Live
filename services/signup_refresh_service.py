@@ -16,7 +16,7 @@ async def refresh_signup_message(interaction: discord.Interaction, raid_id: int)
 
     await interaction.message.edit(
         embed=embed,
-        view=SignupView(str(raid_id)),
+        view = SignupView(str(raid_id), bot),
     )
 
 
@@ -36,5 +36,5 @@ async def refresh_signup_message_by_id(
     message = await channel.fetch_message(raid_id)
     await message.edit(
         embed=embed,
-        view=SignupView(str(raid_id)),
+        view = SignupView(str(raid_id), bot),
     )

@@ -25,7 +25,7 @@ async def on_ready():
         signups = load_signups()
         for message_id in signups.keys():
             try:
-                bot.add_view(SignupView(str(message_id)), message_id=int(message_id))
+                bot.add_view(SignupView(str(message_id), bot))
             except Exception as e:
                 print(f"Failed to register SignupView for message {message_id}: {e}")
 
