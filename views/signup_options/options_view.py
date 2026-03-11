@@ -2,7 +2,8 @@ import asyncio
 import discord
 import config
 
-from logic.signup_manager import remove_user_signup, refresh_signup_message_by_id
+from services.signup_service import remove_user_signup
+from services.signup_refresh_service import refresh_signup_message_by_id
 
 from .helpers import get_signup_entry, delete_ephemeral_after
 from .modals import EditNameModal, EditNoteModal

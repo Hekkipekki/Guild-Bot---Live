@@ -3,7 +3,7 @@ import discord
 import config
 
 from services.character_service import add_user_character
-from logic.signup_manager import set_user_spec
+from services.signup_service import set_user_spec
 from services.signup_ui_service import (
     refresh_and_show_signup_options_from_channel,
 )

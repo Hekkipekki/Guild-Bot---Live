@@ -1,6 +1,4 @@
 from data.character_store import (
-    load_characters,
-    save_characters,
     get_user_characters as store_get_user_characters,
     get_character_by_class as store_get_character_by_class,
     add_character as store_add_character,

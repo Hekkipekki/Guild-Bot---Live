@@ -10,7 +10,7 @@ from views.signup_options import (
     delete_ephemeral_after,
     delete_followup_message_after,
 )
-from logic.signup_manager import set_user_spec
+from services.signup_service import set_user_spec
 
 
 class ClassDropdown(discord.ui.Select):

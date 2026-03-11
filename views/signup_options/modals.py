@@ -2,7 +2,7 @@ import asyncio
 import discord
 
 from services.character_service import update_character_name
-from logic.signup_manager import (
+from services.signup_service import (
     update_user_name,
     update_user_note,
 )

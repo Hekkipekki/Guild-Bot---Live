@@ -1,30 +1,8 @@
 import asyncio
 import discord
-import config
 
+from utils.emoji_helpers import parse_spec_emoji, parse_class_emoji
 from views.signup_options import delete_ephemeral_after
-
-
-def parse_spec_emoji(spec_name: str):
-    raw = config.SPEC_EMOJIS.get(spec_name)
-    if not raw:
-        return None
-
-    try:
-        return discord.PartialEmoji.from_str(raw)
-    except Exception:
-        return None
-
-
-def parse_class_emoji(class_name: str):
-    raw = getattr(config, "CLASS_EMOJIS", {}).get(class_name)
-    if not raw:
-        return None
-
-    try:
-        return discord.PartialEmoji.from_str(raw)
-    except Exception:
-        return None
 
 
 class BackToCharacterMenuButton(discord.ui.Button):

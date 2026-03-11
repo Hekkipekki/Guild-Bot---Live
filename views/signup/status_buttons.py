@@ -1,7 +1,8 @@
 import asyncio
 import discord
 
-from logic.signup_manager import set_user_status, refresh_signup_message
+from services.signup_service import set_user_status
+from services.signup_refresh_service import refresh_signup_message
 from utils.emoji_helpers import parse_button_emoji
 from views.signup_options import delete_ephemeral_after
 
