@@ -1,4 +1,4 @@
-from views.signup_options.helpers import (
+from .helpers import (
     AUTO_DELETE_SECONDS,
     delete_ephemeral_after,
     delete_followup_message_after,
@@ -6,19 +6,19 @@ from views.signup_options.helpers import (
     parse_spec_emoji,
 )
 
-from views.signup_options.embeds import build_signup_options_embed
+from .embeds import build_signup_options_embed
 
-from views.signup_options.modals import (
+from .modals import (
     EditNameModal,
     EditNoteModal,
 )
 
-from views.signup_options.spec_edit_view import (
+from .spec_edit_view import (
     EditSpecSelect,
     EditSpecView,
 )
 
-from views.signup_options.options_view import (
+from .options_view import (
     EditNameButton,
     EditSpecButton,
     EditNoteButton,

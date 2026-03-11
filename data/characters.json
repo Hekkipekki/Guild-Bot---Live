@@ -1,10 +1,10 @@
 {
     "141881090913599488": [
         {
-            "name": "Hekkipekki",
+            "name": "Brummelibrum",
             "class": "Druid",
-            "spec": "Balance",
-            "role": "Ranged"
+            "spec": "Guardian",
+            "role": "Tank"
         },
         {
             "name": "test123",
@@ -13,10 +13,16 @@
             "role": "Tank"
         },
         {
-            "name": "Arms Warrior",
+            "name": "test",
             "class": "Warrior",
-            "spec": "Arms",
-            "role": "Melee"
+            "spec": "ProtectionWarrior",
+            "role": "Tank"
+        },
+        {
+            "name": "Affliction Warlock",
+            "class": "Warlock",
+            "spec": "Affliction",
+            "role": "Ranged"
         }
     ],
     "248796420880990208": [

@@ -164,5 +164,254 @@
     "signed_player_reminders_sent": {
       "60": false
     }
+  },
+  "1481271785109328035": {
+    "title": "HC Progression - Sunday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773599400,
+    "channel_id": 1480191818229350532,
+    "users": {
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "timestamp": 1773233147.623969,
+        "name": "Hekkipekki",
+        "note": "",
+        "status": "absence"
+      }
+    },
+    "expected_players": [
+      "141881090913599488",
+      "771806222525267968",
+      "251004817844076554",
+      "260495039686246400",
+      "321966396864987137",
+      "369109810311987200",
+      "239532428073500672",
+      "344496860855009280",
+      "710915046200574073",
+      "248796420880990208"
+    ],
+    "missing_signup_reminders_sent": {
+      "2880": false,
+      "1440": false
+    },
+    "signed_player_reminders_sent": {
+      "60": false
+    }
+  },
+  "1481272820397904034": {
+    "title": "HC Progression - Sunday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773599400,
+    "channel_id": 1480191818229350532,
+    "users": {},
+    "expected_players": [
+      "141881090913599488",
+      "771806222525267968",
+      "251004817844076554",
+      "260495039686246400",
+      "321966396864987137",
+      "369109810311987200",
+      "239532428073500672",
+      "344496860855009280",
+      "710915046200574073",
+      "248796420880990208"
+    ],
+    "missing_signup_reminders_sent": {
+      "2880": false,
+      "1440": false
+    },
+    "signed_player_reminders_sent": {
+      "60": false
+    }
+  },
+  "1481279828903858228": {
+    "title": "HC Progression - Sunday",
+    "description": "Continuation of HC Progress",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773599400,
+    "channel_id": 1480191818229350532,
+    "users": {
+      "141881090913599488": {
+        "class": "Warrior",
+        "spec": "ProtectionWarrior",
+        "role": "Tank",
+        "timestamp": 1773235769.1007133,
+        "name": "test",
+        "note": "",
+        "status": "absence"
+      }
+    },
+    "expected_players": [
+      "141881090913599488",
+      "771806222525267968",
+      "251004817844076554",
+      "260495039686246400",
+      "321966396864987137",
+      "369109810311987200",
+      "239532428073500672",
+      "344496860855009280",
+      "710915046200574073",
+      "248796420880990208"
+    ],
+    "missing_signup_reminders_sent": {
+      "2880": false,
+      "1440": false
+    },
+    "signed_player_reminders_sent": {
+      "60": false
+    }
+  },
+  "1481282985256030248": {
+    "title": "HC Progression - Template Preview",
+    "description": "Visual preview with fake raid roster",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773858600,
+    "channel_id": 1480191818229350532,
+    "users": {
+      "demo_0": {
+        "display_name": "Darkmoo",
+        "class": "Warrior",
+        "spec": "ProtectionWarrior",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1773235785.9466772
+      },
+      "demo_1": {
+        "display_name": "Critlord",
+        "class": "Shaman",
+        "spec": "RestorationShaman",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773235786.9466772
+      },
+      "demo_2": {
+        "display_name": "Thorgrim",
+        "class": "Druid",
+        "spec": "RestorationDruid",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773235787.9466772
+      },
+      "demo_3": {
+        "display_name": "Bonkadin",
+        "class": "Druid",
+        "spec": "Feral",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773235788.9466772
+      },
+      "demo_4": {
+        "display_name": "Holytoast",
+        "class": "Mage",
+        "spec": "Arcane",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773235789.9466772
+      },
+      "demo_5": {
+        "display_name": "Shockbot",
+        "class": "Hunter",
+        "spec": "Marksmanship",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773235790.9466772
+      },
+      "demo_6": {
+        "display_name": "Dotsdot",
+        "class": "Shaman",
+        "spec": "Enhancement",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773235791.9466772
+      },
+      "demo_7": {
+        "display_name": "Clawbert",
+        "class": "Warrior",
+        "spec": "Fury",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773235792.9466772
+      },
+      "demo_8": {
+        "display_name": "Moonbeef",
+        "class": "Warlock",
+        "spec": "Destruction",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773235793.9466772
+      },
+      "demo_9": {
+        "display_name": "Shieldbro",
+        "class": "Priest",
+        "spec": "Shadow",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773235794.9466772
+      },
+      "demo_10": {
+        "display_name": "Mendrina",
+        "class": "Death Knight",
+        "spec": "FrostDK",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773235795.9466772
+      },
+      "demo_11": {
+        "display_name": "Windbonk",
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "status": "late",
+        "timestamp": 1773235796.9466772
+      },
+      "demo_12": {
+        "display_name": "Shadowzap",
+        "class": "Shaman",
+        "spec": "Enhancement",
+        "role": "Melee",
+        "status": "tentative",
+        "timestamp": 1773235797.9466772
+      },
+      "demo_13": {
+        "display_name": "Hexella",
+        "class": "Hunter",
+        "spec": "Beast Mastery",
+        "role": "Ranged",
+        "status": "absence",
+        "timestamp": 1773235798.9466772
+      },
+      "demo_14": {
+        "display_name": "Totemlord",
+        "class": "Hunter",
+        "spec": "Survival",
+        "role": "Ranged",
+        "status": "bench",
+        "timestamp": 1773235799.9466772
+      }
+    },
+    "expected_players": [
+      "141881090913599488",
+      "771806222525267968",
+      "251004817844076554",
+      "260495039686246400",
+      "321966396864987137",
+      "369109810311987200",
+      "239532428073500672",
+      "344496860855009280",
+      "710915046200574073",
+      "248796420880990208"
+    ],
+    "missing_signup_reminders_sent": {
+      "2880": false,
+      "1440": false
+    },
+    "signed_player_reminders_sent": {
+      "60": false
+    }
   }
 }
