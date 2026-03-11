@@ -1,9 +1,5 @@
 import random
-
-import config
-from data.signup_store import load_signups, save_signups
-from logic.embed_builder import build_signup_embed
-from views.signup_views import SignupView
+import time
 
 
 FAKE_NAMES = [
@@ -13,36 +9,6 @@ FAKE_NAMES = [
     "Hexella", "Clawbert", "Shieldbro", "Dotsdot", "Windbonk",
     "Holytoast", "Darkmoo", "Stonepaw", "Critlord", "Glimmer",
 ]
-
-
-def build_signup_payload(
-    *,
-    title: str,
-    description: str,
-    leader: str,
-    start_ts: int,
-    channel_id: int,
-    users: dict | None = None,
-) -> dict:
-    return {
-        "title": title,
-        "description": description,
-        "leader": leader,
-        "start_ts": start_ts,
-        "channel_id": channel_id,
-        "users": users or {},
-        "expected_players": [
-            str(player_id)
-            for player_id in getattr(config, "DEFAULT_EXPECTED_PLAYERS", [])
-        ],
-        "missing_signup_reminders_sent": {
-            "2880": False,
-            "1440": False,
-        },
-        "signed_player_reminders_sent": {
-            "60": False,
-        },
-    }
 
 
 def build_fake_users() -> dict:
@@ -99,9 +65,9 @@ def build_fake_users() -> dict:
     selected_dps = random.sample(dps, k=dps_count)
 
     selected_players = (
-        [("sign", p) for p in selected_tanks]
-        + [("sign", p) for p in selected_healers]
-        + [("sign", p) for p in selected_dps]
+        [("sign", player) for player in selected_tanks]
+        + [("sign", player) for player in selected_healers]
+        + [("sign", player) for player in selected_dps]
     )
 
     extra_statuses = ["late", "tentative", "absence", "bench"]
@@ -112,7 +78,7 @@ def build_fake_users() -> dict:
     used_names = random.sample(FAKE_NAMES, k=len(selected_players))
 
     users = {}
-    now = __import__("time").time()
+    now = time.time()
 
     for i, (status, (player_class, spec, role)) in enumerate(selected_players):
         fake_user_id = f"demo_{i}"
@@ -126,14 +92,3 @@ def build_fake_users() -> dict:
         }
 
     return users
-
-
-async def send_signup_message(ctx, signup: dict) -> None:
-    embed = build_signup_embed(signup["title"], signup["description"], signup)
-
-    message = await ctx.send(embed=embed)
-    await message.edit(view=SignupView(str(message.id)))
-
-    data = load_signups()
-    data[str(message.id)] = signup
-    save_signups(data)

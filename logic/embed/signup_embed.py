@@ -82,6 +82,9 @@ def build_signup_embed(title: str, description: str, signup: dict) -> discord.Em
         inline=False,
     )
 
+    # visual spacer between signed roster and optional statuses
+    embed.add_field(name="\u200b", value="\u200b", inline=False)
+
     def add_optional_line(label: str, entries: list, icon: str) -> None:
         if not entries:
             return

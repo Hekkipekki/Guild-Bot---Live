@@ -3,8 +3,8 @@
         {
             "name": "Brummelibrum",
             "class": "Druid",
-            "spec": "Guardian",
-            "role": "Tank"
+            "spec": "Balance",
+            "role": "Ranged"
         },
         {
             "name": "test123",

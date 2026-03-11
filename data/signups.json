@@ -604,5 +604,262 @@
     "signed_player_reminders_sent": {
       "60": false
     }
+  },
+  "1481293700226351168": {
+    "title": "HC Progression - Template Preview",
+    "description": "Visual preview with fake raid roster",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773858600,
+    "channel_id": 1480191818229350532,
+    "users": {
+      "demo_0": {
+        "display_name": "Hexella",
+        "class": "Death Knight",
+        "spec": "Blood",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1773238340.5705142
+      },
+      "demo_1": {
+        "display_name": "Holytoast",
+        "class": "Monk",
+        "spec": "Brewmaster",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1773238341.5705142
+      },
+      "demo_2": {
+        "display_name": "Glimmer",
+        "class": "Shaman",
+        "spec": "RestorationShaman",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773238342.5705142
+      },
+      "demo_3": {
+        "display_name": "Shockbot",
+        "class": "Monk",
+        "spec": "Mistweaver",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773238343.5705142
+      },
+      "demo_4": {
+        "display_name": "Windbonk",
+        "class": "Paladin",
+        "spec": "Retribution",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773238344.5705142
+      },
+      "demo_5": {
+        "display_name": "Arrowqt",
+        "class": "Priest",
+        "spec": "Shadow",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773238345.5705142
+      },
+      "demo_6": {
+        "display_name": "Stonepaw",
+        "class": "Death Knight",
+        "spec": "Unholy",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773238346.5705142
+      },
+      "demo_7": {
+        "display_name": "Shieldbro",
+        "class": "Warrior",
+        "spec": "Fury",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773238347.5705142
+      },
+      "demo_8": {
+        "display_name": "Mendrina",
+        "class": "Paladin",
+        "spec": "ProtectionPaladin",
+        "role": "Tank",
+        "status": "late",
+        "timestamp": 1773238348.5705142
+      },
+      "demo_9": {
+        "display_name": "Clawbert",
+        "class": "Death Knight",
+        "spec": "FrostDK",
+        "role": "Melee",
+        "status": "tentative",
+        "timestamp": 1773238349.5705142
+      },
+      "demo_10": {
+        "display_name": "Darkmoo",
+        "class": "Warlock",
+        "spec": "Demonology",
+        "role": "Ranged",
+        "status": "absence",
+        "timestamp": 1773238350.5705142
+      },
+      "demo_11": {
+        "display_name": "Critlord",
+        "class": "Death Knight",
+        "spec": "Blood",
+        "role": "Tank",
+        "status": "bench",
+        "timestamp": 1773238351.5705142
+      }
+    },
+    "expected_players": [
+      "141881090913599488",
+      "771806222525267968",
+      "251004817844076554",
+      "260495039686246400",
+      "321966396864987137",
+      "369109810311987200",
+      "239532428073500672",
+      "344496860855009280",
+      "710915046200574073",
+      "248796420880990208"
+    ],
+    "missing_signup_reminders_sent": {
+      "2880": false,
+      "1440": false
+    },
+    "signed_player_reminders_sent": {
+      "60": false
+    }
+  },
+  "1481294834722410661": {
+    "title": "HC Progression - Template Preview",
+    "description": "Visual preview with fake raid roster",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773858600,
+    "channel_id": 1480191818229350532,
+    "users": {
+      "demo_0": {
+        "display_name": "Moonbeef",
+        "class": "Death Knight",
+        "spec": "Blood",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1773238611.1753018
+      },
+      "demo_1": {
+        "display_name": "Hexella",
+        "class": "Druid",
+        "spec": "Guardian",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1773238612.1753018
+      },
+      "demo_2": {
+        "display_name": "Clawbert",
+        "class": "Shaman",
+        "spec": "RestorationShaman",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773238613.1753018
+      },
+      "demo_3": {
+        "display_name": "Totemlord",
+        "class": "Priest",
+        "spec": "HolyPriest",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773238614.1753018
+      },
+      "demo_4": {
+        "display_name": "Critlord",
+        "class": "Warlock",
+        "spec": "Affliction",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773238615.1753018
+      },
+      "demo_5": {
+        "display_name": "Smitey",
+        "class": "Mage",
+        "spec": "Frost",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773238616.1753018
+      },
+      "demo_6": {
+        "display_name": "Pyroblastz",
+        "class": "Mage",
+        "spec": "Arcane",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773238617.1753018
+      },
+      "demo_7": {
+        "display_name": "Leafhealz",
+        "class": "Warrior",
+        "spec": "Arms",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773238618.1753018
+      },
+      "demo_8": {
+        "display_name": "Dotsdot",
+        "class": "Mage",
+        "spec": "Arcane",
+        "role": "Ranged",
+        "status": "late",
+        "timestamp": 1773238619.1753018
+      },
+      "demo_9": {
+        "display_name": "Frostzug",
+        "class": "Monk",
+        "spec": "Windwalker",
+        "role": "Melee",
+        "status": "tentative",
+        "timestamp": 1773238620.1753018
+      },
+      "demo_10": {
+        "display_name": "Shadowzap",
+        "class": "Shaman",
+        "spec": "RestorationShaman",
+        "role": "Healer",
+        "status": "absence",
+        "timestamp": 1773238621.1753018
+      },
+      "demo_11": {
+        "display_name": "Stonepaw",
+        "class": "Monk",
+        "spec": "Mistweaver",
+        "role": "Healer",
+        "status": "bench",
+        "timestamp": 1773238622.1753018
+      },
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "timestamp": 1773238637.9062753,
+        "name": "Brummelibrum",
+        "note": "",
+        "status": "sign"
+      }
+    },
+    "expected_players": [
+      "141881090913599488",
+      "771806222525267968",
+      "251004817844076554",
+      "260495039686246400",
+      "321966396864987137",
+      "369109810311987200",
+      "239532428073500672",
+      "344496860855009280",
+      "710915046200574073",
+      "248796420880990208"
+    ],
+    "missing_signup_reminders_sent": {
+      "2880": false,
+      "1440": false
+    },
+    "signed_player_reminders_sent": {
+      "60": false
+    }
   }
 }
