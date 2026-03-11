@@ -2,6 +2,7 @@ import asyncio
 import discord
 
 from utils.emoji_helpers import parse_spec_emoji, parse_class_emoji
+from utils.ui_timing import CHARACTER_MENU_AUTO_DELETE_SECONDS
 from views.signup_options import delete_ephemeral_after
 
 
@@ -27,4 +28,6 @@ class BackToCharacterMenuButton(discord.ui.Button):
                 filter_class=self.filter_class,
             ),
         )
-        asyncio.create_task(delete_ephemeral_after(interaction, 30))
+        asyncio.create_task(
+            delete_ephemeral_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+        )

@@ -9,6 +9,7 @@ from services.signup_service import (
 from services.signup_ui_service import (
     refresh_main_signup_from_channel,
 )
+from utils.ui_timing import SIGNUP_OPTIONS_AUTO_DELETE_SECONDS
 from .helpers import get_signup_entry, delete_ephemeral_after
 from .embeds import build_signup_options_embed
 
@@ -62,7 +63,9 @@ class EditNameModal(discord.ui.Modal, title="Edit Character Name"):
             view=SignupOptionsView(self.raid_id, self.user_id),
         )
 
-        asyncio.create_task(delete_ephemeral_after(interaction))
+        asyncio.create_task(
+            delete_ephemeral_after(interaction, SIGNUP_OPTIONS_AUTO_DELETE_SECONDS)
+        )
 
 
 class EditNoteModal(discord.ui.Modal, title="Edit Note"):
@@ -105,4 +108,6 @@ class EditNoteModal(discord.ui.Modal, title="Edit Note"):
             view=SignupOptionsView(self.raid_id, self.user_id),
         )
 
-        asyncio.create_task(delete_ephemeral_after(interaction))
+        asyncio.create_task(
+            delete_ephemeral_after(interaction, SIGNUP_OPTIONS_AUTO_DELETE_SECONDS)
+        )

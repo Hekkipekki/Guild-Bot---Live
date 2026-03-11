@@ -7,8 +7,9 @@ async def send_signup_message(ctx, signup: dict) -> None:
     embed = build_signup_embed(signup["title"], signup["description"], signup)
 
     message = await ctx.send(embed=embed)
-    await message.edit(view=SignupView(str(message.id)))
 
     data = load_signups()
     data[str(message.id)] = signup
     save_signups(data)
+
+    await message.edit(view=SignupView(str(message.id)))

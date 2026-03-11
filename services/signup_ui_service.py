@@ -11,6 +11,10 @@ from views.signup_options.helpers import (
     delete_ephemeral_after,
     delete_followup_message_after,
 )
+from utils.ui_timing import (
+    SIGNUP_OPTIONS_AUTO_DELETE_SECONDS,
+    ERROR_MESSAGE_AUTO_DELETE_SECONDS,
+)
 
 
 async def refresh_main_signup_from_interaction(
@@ -27,13 +31,17 @@ async def refresh_main_signup_from_interaction(
                 ephemeral=True,
                 wait=True,
             )
-            asyncio.create_task(delete_followup_message_after(msg, 10))
+            asyncio.create_task(
+                delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
         else:
             await interaction.response.send_message(
                 "⚠ Could not find the signup message.",
                 ephemeral=True,
             )
-            asyncio.create_task(delete_ephemeral_after(interaction, 10))
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
         return False
     except Exception as e:
         if interaction.response.is_done():
@@ -42,13 +50,17 @@ async def refresh_main_signup_from_interaction(
                 ephemeral=True,
                 wait=True,
             )
-            asyncio.create_task(delete_followup_message_after(msg, 10))
+            asyncio.create_task(
+                delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
         else:
             await interaction.response.send_message(
                 f"⚠ Could not refresh signup message: {e}",
                 ephemeral=True,
             )
-            asyncio.create_task(delete_ephemeral_after(interaction, 10))
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
         return False
 
 
@@ -64,14 +76,18 @@ async def refresh_main_signup_from_channel(
             "⚠ Could not find the signup message.",
             ephemeral=True,
         )
-        asyncio.create_task(delete_ephemeral_after(interaction, 10))
+        asyncio.create_task(
+            delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+        )
         return False
     except Exception as e:
         await interaction.response.send_message(
             f"⚠ Could not refresh signup message: {e}",
             ephemeral=True,
         )
-        asyncio.create_task(delete_ephemeral_after(interaction, 10))
+        asyncio.create_task(
+            delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+        )
         return False
 
 
@@ -80,7 +96,7 @@ async def show_signup_options_panel(
     raid_id: int,
     user_id: int,
     *,
-    delete_after: int = 45,
+    delete_after: int = SIGNUP_OPTIONS_AUTO_DELETE_SECONDS,
 ) -> bool:
     from views.signup_options.options_view import SignupOptionsView
 
@@ -92,13 +108,17 @@ async def show_signup_options_panel(
                 ephemeral=True,
                 wait=True,
             )
-            asyncio.create_task(delete_followup_message_after(msg, 10))
+            asyncio.create_task(
+                delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
         else:
             await interaction.response.send_message(
                 "⚠ Could not load signup options.",
                 ephemeral=True,
             )
-            asyncio.create_task(delete_ephemeral_after(interaction, 10))
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
         return False
 
     if interaction.response.is_done():
@@ -125,7 +145,7 @@ async def refresh_and_show_signup_options_from_interaction(
     raid_id: int,
     user_id: int,
     *,
-    delete_after: int = 45,
+    delete_after: int = SIGNUP_OPTIONS_AUTO_DELETE_SECONDS,
 ) -> bool:
     ok = await refresh_main_signup_from_interaction(interaction, raid_id)
     if not ok:
@@ -144,7 +164,7 @@ async def refresh_and_show_signup_options_from_channel(
     raid_id: int,
     user_id: int,
     *,
-    delete_after: int = 45,
+    delete_after: int = SIGNUP_OPTIONS_AUTO_DELETE_SECONDS,
 ) -> bool:
     ok = await refresh_main_signup_from_channel(interaction, raid_id)
     if not ok:

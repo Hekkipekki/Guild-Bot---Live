@@ -6,6 +6,10 @@ from services.signup_service import set_user_spec
 from services.signup_ui_service import (
     refresh_and_show_signup_options_from_channel,
 )
+from utils.ui_timing import (
+    CHARACTER_MENU_AUTO_DELETE_SECONDS,
+    ERROR_MESSAGE_AUTO_DELETE_SECONDS,
+)
 from views.signup_options import delete_ephemeral_after
 from views.signup.shared import parse_spec_emoji
 from views.signup.character_add_view import AddCharacterClassView
@@ -78,7 +82,9 @@ class CharacterSelect(discord.ui.Select):
                     preselected_class=self.filter_class,
                 ),
             )
-            asyncio.create_task(delete_ephemeral_after(interaction, 30))
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+            )
             return
 
         if value == "manage":
@@ -90,7 +96,9 @@ class CharacterSelect(discord.ui.Select):
                     filter_class=self.filter_class,
                 ),
             )
-            asyncio.create_task(delete_ephemeral_after(interaction, 30))
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+            )
             return
 
         if int(value) >= len(self.filtered_characters):
@@ -102,7 +110,9 @@ class CharacterSelect(discord.ui.Select):
                     filter_class=self.filter_class,
                 ),
             )
-            asyncio.create_task(delete_ephemeral_after(interaction, 10))
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
             return
 
         char = self.filtered_characters[int(value)]
@@ -121,7 +131,6 @@ class CharacterSelect(discord.ui.Select):
             interaction,
             self.parent_message_id,
             interaction.user.id,
-            delete_after=45,
         )
 
 

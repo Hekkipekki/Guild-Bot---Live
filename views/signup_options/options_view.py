@@ -4,6 +4,7 @@ import config
 
 from services.signup_service import remove_user_signup
 from services.signup_refresh_service import refresh_signup_message_by_id
+from utils.ui_timing import SHORT_CONFIRMATION_DELETE_SECONDS
 
 from .helpers import get_signup_entry, delete_ephemeral_after
 from .modals import EditNameModal, EditNoteModal
@@ -96,7 +97,9 @@ class RemoveSignupButton(discord.ui.Button):
             view=None,
         )
 
-        asyncio.create_task(delete_ephemeral_after(interaction, 5))
+        asyncio.create_task(
+            delete_ephemeral_after(interaction, SHORT_CONFIRMATION_DELETE_SECONDS)
+        )
 
 
 class SignupOptionsView(discord.ui.View):

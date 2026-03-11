@@ -1,4 +1,6 @@
 import asyncio
+import traceback
+
 import discord
 from discord.ext import commands
 
@@ -47,8 +49,8 @@ async def on_ready():
 
 @bot.event
 async def on_command_error(ctx, error):
-    print(f"Command error: {error}")
-    await ctx.send(f"Command error: {error}")
+    print("Command error:")
+    traceback.print_exception(type(error), error, error.__traceback__)
 
 
 @bot.command()

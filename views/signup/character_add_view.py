@@ -7,6 +7,10 @@ from services.signup_service import set_user_spec
 from services.signup_ui_service import (
     refresh_and_show_signup_options_from_channel,
 )
+from utils.ui_timing import (
+    CHARACTER_MENU_AUTO_DELETE_SECONDS,
+    ERROR_MESSAGE_AUTO_DELETE_SECONDS,
+)
 from views.signup_options import delete_ephemeral_after
 from views.signup.shared import (
     parse_spec_emoji,
@@ -64,7 +68,9 @@ class AddCharacterClassSelect(discord.ui.Select):
                 filter_class=self.filter_class,
             ),
         )
-        asyncio.create_task(delete_ephemeral_after(interaction, 30))
+        asyncio.create_task(
+            delete_ephemeral_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+        )
 
 
 class AddCharacterSpecSelect(discord.ui.Select):
@@ -123,7 +129,9 @@ class AddCharacterSpecSelect(discord.ui.Select):
                     filter_class=self.filter_class,
                 ),
             )
-            asyncio.create_task(delete_ephemeral_after(interaction, 10))
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
             return
 
         set_user_spec(
@@ -140,7 +148,6 @@ class AddCharacterSpecSelect(discord.ui.Select):
             interaction,
             self.parent_message_id,
             interaction.user.id,
-            delete_after=45,
         )
 
 

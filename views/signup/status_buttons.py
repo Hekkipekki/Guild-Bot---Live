@@ -4,6 +4,7 @@ import discord
 from services.signup_service import set_user_status
 from services.signup_refresh_service import refresh_signup_message
 from utils.emoji_helpers import parse_button_emoji
+from utils.ui_timing import ERROR_MESSAGE_AUTO_DELETE_SECONDS
 from views.signup_options import delete_ephemeral_after
 
 
@@ -37,7 +38,9 @@ class SignupStatusButton(discord.ui.Button):
 
         if not ok:
             await interaction.response.send_message(error_message, ephemeral=True)
-            asyncio.create_task(delete_ephemeral_after(interaction, 10))
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
             return
 
         await interaction.response.defer()

@@ -2,6 +2,11 @@ import asyncio
 import discord
 
 from services.character_service import get_user_characters, remove_user_character
+from utils.ui_timing import (
+    CHARACTER_MENU_AUTO_DELETE_SECONDS,
+    ERROR_MESSAGE_AUTO_DELETE_SECONDS,
+    SHORT_CONFIRMATION_DELETE_SECONDS,
+)
 from views.signup_options import delete_ephemeral_after
 from views.signup.shared import parse_spec_emoji, BackToCharacterMenuButton
 
@@ -51,7 +56,9 @@ class RemoveCharacterSelect(discord.ui.Select):
 
         if value == "none":
             await interaction.response.defer()
-            asyncio.create_task(delete_ephemeral_after(interaction, 5))
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, SHORT_CONFIRMATION_DELETE_SECONDS)
+            )
             return
 
         if int(value) >= len(self.filtered_characters):
@@ -63,7 +70,9 @@ class RemoveCharacterSelect(discord.ui.Select):
                     filter_class=self.filter_class,
                 ),
             )
-            asyncio.create_task(delete_ephemeral_after(interaction, 10))
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
             return
 
         char_to_remove = self.filtered_characters[int(value)]
@@ -83,7 +92,9 @@ class RemoveCharacterSelect(discord.ui.Select):
                     filter_class=self.filter_class,
                 ),
             )
-            asyncio.create_task(delete_ephemeral_after(interaction, 10))
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
             return
 
         remove_user_character(self.user_id, real_index)
@@ -96,7 +107,9 @@ class RemoveCharacterSelect(discord.ui.Select):
                 filter_class=self.filter_class,
             ),
         )
-        asyncio.create_task(delete_ephemeral_after(interaction, 15))
+        asyncio.create_task(
+            delete_ephemeral_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+        )
 
 
 class ManageCharactersView(discord.ui.View):

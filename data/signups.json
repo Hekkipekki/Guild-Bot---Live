@@ -289,5 +289,138 @@
     "signed_player_reminders_sent": {
       "60": false
     }
+  },
+  "1481339773783113861": {
+    "title": "HC Progression - Template Preview",
+    "description": "Visual preview with fake raid roster",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773858600,
+    "channel_id": 1480191818229350532,
+    "users": {
+      "demo_0": {
+        "display_name": "Critlord",
+        "class": "Warrior",
+        "spec": "ProtectionWarrior",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1773249324.389301
+      },
+      "demo_1": {
+        "display_name": "Thorgrim",
+        "class": "Paladin",
+        "spec": "ProtectionPaladin",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1773249325.389301
+      },
+      "demo_2": {
+        "display_name": "Arrowqt",
+        "class": "Priest",
+        "spec": "HolyPriest",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773249326.389301
+      },
+      "demo_3": {
+        "display_name": "Shockbot",
+        "class": "Priest",
+        "spec": "Discipline",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773249327.389301
+      },
+      "demo_4": {
+        "display_name": "Smitey",
+        "class": "Shaman",
+        "spec": "Elemental",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773249328.389301
+      },
+      "demo_5": {
+        "display_name": "Totemlord",
+        "class": "Rogue",
+        "spec": "Combat",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773249329.389301
+      },
+      "demo_6": {
+        "display_name": "Bonkadin",
+        "class": "Mage",
+        "spec": "Arcane",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773249330.389301
+      },
+      "demo_7": {
+        "display_name": "Clawbert",
+        "class": "Mage",
+        "spec": "Frost",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773249331.389301
+      },
+      "demo_8": {
+        "display_name": "Hexella",
+        "class": "Monk",
+        "spec": "Windwalker",
+        "role": "Melee",
+        "status": "late",
+        "timestamp": 1773249332.389301
+      },
+      "demo_9": {
+        "display_name": "Frostzug",
+        "class": "Rogue",
+        "spec": "Combat",
+        "role": "Melee",
+        "status": "tentative",
+        "timestamp": 1773249333.389301
+      },
+      "demo_10": {
+        "display_name": "Dotsdot",
+        "class": "Hunter",
+        "spec": "Marksmanship",
+        "role": "Ranged",
+        "status": "absence",
+        "timestamp": 1773249334.389301
+      },
+      "demo_11": {
+        "display_name": "Soulrot",
+        "class": "Warrior",
+        "spec": "Arms",
+        "role": "Melee",
+        "status": "bench",
+        "timestamp": 1773249335.389301
+      },
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "timestamp": 1773249372.7585964,
+        "name": "Brummelibrum",
+        "note": "",
+        "status": "sign"
+      }
+    },
+    "expected_players": [
+      "141881090913599488",
+      "771806222525267968",
+      "251004817844076554",
+      "260495039686246400",
+      "321966396864987137",
+      "369109810311987200",
+      "239532428073500672",
+      "344496860855009280",
+      "710915046200574073",
+      "248796420880990208"
+    ],
+    "missing_signup_reminders_sent": {
+      "2880": false,
+      "1440": false
+    },
+    "signed_player_reminders_sent": {
+      "60": false
+    }
   }
 }

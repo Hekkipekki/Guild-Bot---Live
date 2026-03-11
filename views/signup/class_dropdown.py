@@ -6,6 +6,10 @@ from services.signup_ui_service import (
     refresh_and_show_signup_options_from_interaction,
 )
 from utils.emoji_helpers import parse_class_emoji
+from utils.ui_timing import (
+    CHARACTER_MENU_AUTO_DELETE_SECONDS,
+    ERROR_MESSAGE_AUTO_DELETE_SECONDS,
+)
 from views.signup_options import (
     delete_ephemeral_after,
     delete_followup_message_after,
@@ -67,7 +71,7 @@ class ClassDropdown(discord.ui.Select):
                     interaction,
                     int(self.raid_id),
                     interaction.user.id,
-                    delete_after=45,
+                    delete_after=CHARACTER_MENU_AUTO_DELETE_SECONDS,
                 )
                 return
 
@@ -81,7 +85,9 @@ class ClassDropdown(discord.ui.Select):
                     filter_class=selected_class,
                 ),
             )
-            asyncio.create_task(delete_ephemeral_after(interaction, 30))
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+            )
 
         except Exception as e:
             if interaction.response.is_done():
@@ -90,10 +96,14 @@ class ClassDropdown(discord.ui.Select):
                     ephemeral=True,
                     wait=True,
                 )
-                asyncio.create_task(delete_followup_message_after(msg, 10))
+                asyncio.create_task(
+                    delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                )
             else:
                 await interaction.response.send_message(
                     f"⚠ Class select failed: `{type(e).__name__}: {e}`",
                     ephemeral=True,
                 )
-                asyncio.create_task(delete_ephemeral_after(interaction, 10))
+                asyncio.create_task(
+                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                )
