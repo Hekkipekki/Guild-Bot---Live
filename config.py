@@ -1,5 +1,8 @@
 from pathlib import Path
 
+TEST_GUILD_ID = 1423706462773051542
+RAID_CONTROL_USER_IDS = [141881090913599488]
+
 BASE_DIR = Path(__file__).resolve().parent
 
 try:

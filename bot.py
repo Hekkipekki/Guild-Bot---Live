@@ -12,11 +12,12 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 _views_registered = False
+_commands_synced = False
 
 
 @bot.event
 async def on_ready():
-    global _views_registered
+    global _views_registered, _commands_synced
 
     if not _views_registered:
         bot.add_view(RaidPackView())
@@ -29,6 +30,17 @@ async def on_ready():
                 print(f"Failed to register SignupView for message {message_id}: {e}")
 
         _views_registered = True
+
+    if not _commands_synced:
+        try:
+            guild_obj = discord.Object(id=config.TEST_GUILD_ID)
+            bot.tree.copy_global_to(guild=guild_obj)
+            synced = await bot.tree.sync(guild=guild_obj)
+            print(f"Synced {len(synced)} guild slash command(s) to {config.TEST_GUILD_ID}.")
+        except Exception as e:
+            print(f"Failed to sync slash commands: {e}")
+
+        _commands_synced = True
 
     print(f"Logged in as {bot.user}")
 
@@ -52,6 +64,7 @@ async def main():
     async with bot:
         await bot.load_extension("cogs.wa_commands")
         await bot.load_extension("cogs.signup")
+        await bot.load_extension("cogs.raid_leader")
         await bot.load_extension("cogs.reminders")
         await bot.start(config.TOKEN)
 
