@@ -1,22 +1,9 @@
 import asyncio
 import discord
-import config
 
 from logic.signup_manager import set_user_status, refresh_signup_message
+from utils.emoji_helpers import parse_button_emoji
 from views.signup_options import delete_ephemeral_after
-
-
-def get_button_emoji(name: str):
-    emoji_map = getattr(config, "BUTTON_EMOJIS", {})
-    value = emoji_map.get(name)
-
-    if not value:
-        return None
-
-    try:
-        return discord.PartialEmoji.from_str(value)
-    except Exception:
-        return None
 
 
 class SignupStatusButton(discord.ui.Button):
@@ -32,7 +19,7 @@ class SignupStatusButton(discord.ui.Button):
     ):
         super().__init__(
             label=label,
-            emoji=get_button_emoji(emoji_name),
+            emoji=parse_button_emoji(emoji_name),
             style=style,
             custom_id=f"signup:{status}:{raid_id}",
             row=row,

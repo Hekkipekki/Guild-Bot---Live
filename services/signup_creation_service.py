@@ -89,9 +89,10 @@ def build_fake_users() -> dict:
         ("Death Knight", "Unholy", "Melee"),
     ]
 
-    tank_count = random.randint(1, 2)
-    healer_count = random.randint(2, 3)
-    dps_count = random.randint(8, 9)
+    # 8 signed + 4 extras = 12 total users
+    tank_count = 2
+    healer_count = 2
+    dps_count = 4
 
     selected_tanks = random.sample(tanks, k=tank_count)
     selected_healers = random.sample(healers, k=healer_count)

@@ -1,13 +1,14 @@
 import asyncio
 import discord
 
-from data.character_store import update_character_name_by_class
+from services.character_service import update_character_name
 from logic.signup_manager import (
-    refresh_signup_message_by_id,
     update_user_name,
     update_user_note,
 )
-
+from services.signup_ui_service import (
+    refresh_main_signup_from_channel,
+)
 from .helpers import get_signup_entry, delete_ephemeral_after
 from .embeds import build_signup_options_embed
 
@@ -44,12 +45,9 @@ class EditNameModal(discord.ui.Modal, title="Edit Character Name"):
             return
 
         if class_name:
-            update_character_name_by_class(self.user_id, class_name, new_name)
+            update_character_name(self.user_id, class_name, new_name)
 
-        try:
-            await refresh_signup_message_by_id(interaction.channel, self.raid_id)
-        except Exception:
-            pass
+        await refresh_main_signup_from_channel(interaction, self.raid_id)
 
         updated = get_signup_entry(self.raid_id, str(self.user_id))
         if not updated:
@@ -92,10 +90,7 @@ class EditNoteModal(discord.ui.Modal, title="Edit Note"):
             await interaction.response.send_message("Signup not found.", ephemeral=True)
             return
 
-        try:
-            await refresh_signup_message_by_id(interaction.channel, self.raid_id)
-        except Exception:
-            pass
+        await refresh_main_signup_from_channel(interaction, self.raid_id)
 
         updated = get_signup_entry(self.raid_id, str(self.user_id))
         if not updated:

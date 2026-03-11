@@ -1,7 +1,7 @@
 import asyncio
 import discord
 
-from data.character_store import get_user_characters, remove_character
+from services.character_service import get_user_characters, remove_user_character
 from views.signup_options import delete_ephemeral_after
 from views.signup.shared import parse_spec_emoji, BackToCharacterMenuButton
 
@@ -86,7 +86,7 @@ class RemoveCharacterSelect(discord.ui.Select):
             asyncio.create_task(delete_ephemeral_after(interaction, 10))
             return
 
-        remove_character(self.user_id, real_index)
+        remove_user_character(self.user_id, real_index)
 
         await interaction.response.edit_message(
             content=f"🗑 Removed **{char_to_remove['name']}**",

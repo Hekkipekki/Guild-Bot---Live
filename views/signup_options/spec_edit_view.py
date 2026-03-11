@@ -2,11 +2,12 @@ import asyncio
 import discord
 import config
 
-from data.character_store import update_character_spec_by_class
-from logic.signup_manager import refresh_signup_message_by_id, update_user_spec
-
+from services.character_service import update_character_spec
+from logic.signup_manager import update_user_spec
+from services.signup_ui_service import (
+    refresh_and_show_signup_options_from_channel,
+)
 from .helpers import get_signup_entry, parse_spec_emoji, delete_ephemeral_after
-from .embeds import build_signup_options_embed
 
 
 class EditSpecSelect(discord.ui.Select):
@@ -54,32 +55,19 @@ class EditSpecSelect(discord.ui.Select):
             await interaction.response.send_message("Could not update spec.", ephemeral=True)
             return
 
-        update_character_spec_by_class(
+        update_character_spec(
             self.user_id,
             self.selected_class,
             selected_spec,
             role,
         )
 
-        try:
-            await refresh_signup_message_by_id(interaction.channel, self.raid_id)
-        except Exception:
-            pass
-
-        updated = get_signup_entry(self.raid_id, str(self.user_id))
-        if not updated:
-            await interaction.response.send_message("Signup not found.", ephemeral=True)
-            return
-
-        from .options_view import SignupOptionsView
-
-        await interaction.response.edit_message(
-            content=None,
-            embed=build_signup_options_embed(updated),
-            view=SignupOptionsView(self.raid_id, self.user_id),
+        await refresh_and_show_signup_options_from_channel(
+            interaction,
+            self.raid_id,
+            self.user_id,
+            delete_after=45,
         )
-
-        asyncio.create_task(delete_ephemeral_after(interaction))
 
 
 class EditSpecView(discord.ui.View):

@@ -1,14 +1,12 @@
 import asyncio
 import discord
 
-from data.character_store import get_user_characters
-from logic.signup_manager import set_user_spec, refresh_signup_message_by_id
-from views.signup_options import (
-    SignupOptionsView,
-    build_signup_options_embed,
-    get_signup_entry,
-    delete_ephemeral_after,
+from services.character_service import get_user_characters
+from logic.signup_manager import set_user_spec
+from services.signup_ui_service import (
+    refresh_and_show_signup_options_from_channel,
 )
+from views.signup_options import delete_ephemeral_after
 from views.signup.shared import parse_spec_emoji
 from views.signup.character_add_view import AddCharacterClassView
 from views.signup.character_manage_view import ManageCharactersView
@@ -109,55 +107,22 @@ class CharacterSelect(discord.ui.Select):
 
         char = self.filtered_characters[int(value)]
 
-        selected_class = char["class"]
-        selected_spec = char["spec"]
-        role = char["role"]
-
         set_user_spec(
             raid_id=self.parent_message_id,
             user_id=str(interaction.user.id),
-            selected_class=selected_class,
-            selected_spec=selected_spec,
-            role=role,
+            selected_class=char["class"],
+            selected_spec=char["spec"],
+            role=char["role"],
             character_name=char["name"],
             auto_sign=True,
         )
 
-        try:
-            await refresh_signup_message_by_id(
-                interaction.channel,
-                self.parent_message_id,
-            )
-        except discord.NotFound:
-            await interaction.response.send_message(
-                "⚠ Could not find the signup message.",
-                ephemeral=True,
-            )
-            asyncio.create_task(delete_ephemeral_after(interaction, 10))
-            return
-        except Exception as e:
-            await interaction.response.send_message(
-                f"⚠ Character selection failed: {e}",
-                ephemeral=True,
-            )
-            asyncio.create_task(delete_ephemeral_after(interaction, 10))
-            return
-
-        entry = get_signup_entry(self.parent_message_id, str(interaction.user.id))
-        if not entry:
-            await interaction.response.send_message(
-                "⚠ Signed up, but could not load signup options.",
-                ephemeral=True,
-            )
-            asyncio.create_task(delete_ephemeral_after(interaction, 10))
-            return
-
-        await interaction.response.edit_message(
-            content=None,
-            embed=build_signup_options_embed(entry),
-            view=SignupOptionsView(self.parent_message_id, interaction.user.id),
+        await refresh_and_show_signup_options_from_channel(
+            interaction,
+            self.parent_message_id,
+            interaction.user.id,
+            delete_after=45,
         )
-        asyncio.create_task(delete_ephemeral_after(interaction, 45))
 
 
 class CharacterView(discord.ui.View):

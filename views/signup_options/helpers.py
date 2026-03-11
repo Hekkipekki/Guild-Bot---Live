@@ -1,8 +1,8 @@
 import asyncio
 import discord
 
-import config
 from data.signup_store import load_signups
+from utils.emoji_helpers import parse_spec_emoji
 
 
 AUTO_DELETE_SECONDS = 45
@@ -44,14 +44,3 @@ def get_signup_entry(raid_id: int, user_id: str) -> dict | None:
     raid = data.get(str(raid_id), {})
     users = raid.get("users", {})
     return users.get(str(user_id))
-
-
-def parse_spec_emoji(spec_name: str):
-    raw = config.SPEC_EMOJIS.get(spec_name)
-    if not raw:
-        return None
-
-    try:
-        return discord.PartialEmoji.from_str(raw)
-    except Exception:
-        return None

@@ -2,37 +2,29 @@ import asyncio
 import discord
 import config
 
+from services.signup_ui_service import (
+    refresh_and_show_signup_options_from_interaction,
+)
+from utils.emoji_helpers import parse_class_emoji
 from views.signup_options import (
-    SignupOptionsView,
-    build_signup_options_embed,
-    get_signup_entry,
     delete_ephemeral_after,
     delete_followup_message_after,
 )
+from logic.signup_manager import set_user_spec
 
 
 class ClassDropdown(discord.ui.Select):
     def __init__(self, raid_id: str):
         self.raid_id = raid_id
 
-        options = []
-        for cls in config.CLASSES:
-            raw_emoji = config.CLASS_EMOJIS.get(cls)
-            emoji = None
-
-            if raw_emoji:
-                try:
-                    emoji = discord.PartialEmoji.from_str(raw_emoji)
-                except Exception:
-                    emoji = None
-
-            options.append(
-                discord.SelectOption(
-                    label=cls,
-                    value=cls,
-                    emoji=emoji,
-                )
+        options = [
+            discord.SelectOption(
+                label=cls,
+                value=cls,
+                emoji=parse_class_emoji(cls),
             )
+            for cls in config.CLASSES
+        ]
 
         super().__init__(
             placeholder="Select your class...",
@@ -47,8 +39,7 @@ class ClassDropdown(discord.ui.Select):
         try:
             selected_class = self.values[0]
 
-            from data.character_store import get_user_characters
-            from logic.signup_manager import set_user_spec, refresh_signup_message
+            from services.character_service import get_user_characters
             from views.character_select import AddCharacterSpecView
 
             characters = get_user_characters(interaction.user.id)
@@ -71,25 +62,13 @@ class ClassDropdown(discord.ui.Select):
                 )
 
                 await interaction.response.defer()
-                await refresh_signup_message(interaction, int(self.raid_id))
 
-                entry = get_signup_entry(int(self.raid_id), str(interaction.user.id))
-                if not entry:
-                    msg = await interaction.followup.send(
-                        "⚠ Signed up, but could not load signup options.",
-                        ephemeral=True,
-                        wait=True,
-                    )
-                    asyncio.create_task(delete_followup_message_after(msg, 10))
-                    return
-
-                msg = await interaction.followup.send(
-                    embed=build_signup_options_embed(entry),
-                    view=SignupOptionsView(int(self.raid_id), interaction.user.id),
-                    ephemeral=True,
-                    wait=True,
+                await refresh_and_show_signup_options_from_interaction(
+                    interaction,
+                    int(self.raid_id),
+                    interaction.user.id,
+                    delete_after=45,
                 )
-                asyncio.create_task(delete_followup_message_after(msg, 45))
                 return
 
             await interaction.response.send_message(

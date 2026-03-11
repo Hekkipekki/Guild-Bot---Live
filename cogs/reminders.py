@@ -3,29 +3,17 @@ import discord
 from discord.ext import commands, tasks
 
 from data.signup_store import load_signups, save_signups
-from logic.unassigned import get_unassigned_players
-
-
-MISSING_SIGNUP_THRESHOLDS = {
-    "2880": "48 hours",
-    "1440": "24 hours",
-}
-
-SIGNED_PLAYER_THRESHOLDS = {
-    "60": "1 hour",
-}
-
-
-def should_send_threshold(minutes_left: int, threshold: int, window: int = 300) -> bool:
-    """
-    Send reminder if current time is inside the allowed reminder window.
-
-    Example with window=300 (5 hours):
-    - threshold=2880 -> sends when minutes_left is between 2581 and 2880
-    - threshold=1440 -> sends when minutes_left is between 1141 and 1440
-    - threshold=60   -> sends when minutes_left is between 1 and 60
-    """
-    return threshold - window < minutes_left <= threshold
+from services.reminder_service import (
+    ensure_missing_signup_reminder_state,
+    ensure_signed_player_reminder_state,
+    get_signup_title,
+    get_missing_players,
+    get_signed_players,
+    find_missing_signup_threshold_to_send,
+    find_signed_player_threshold_to_send,
+    build_missing_signup_reminder_message,
+    build_signed_player_reminder_message,
+)
 
 
 class ReminderCog(commands.Cog):
@@ -62,82 +50,55 @@ class ReminderCog(commands.Cog):
                 except Exception:
                     continue
 
-            missing_reminders_sent = signup.setdefault(
-                "missing_signup_reminders_sent",
-                {
-                    "2880": False,
-                    "1440": False,
-                },
-            )
-
-            signed_reminders_sent = signup.setdefault(
-                "signed_player_reminders_sent",
-                {
-                    "60": False,
-                },
-            )
-
-            title = signup.get("title", "Raid")
+            missing_reminders_sent = ensure_missing_signup_reminder_state(signup)
+            signed_reminders_sent = ensure_signed_player_reminder_state(signup)
+            title = get_signup_title(signup)
 
             # 1) Missing signup reminders
-            unassigned_players = get_unassigned_players(signup)
+            missing_players = get_missing_players(signup)
+            if missing_players:
+                threshold_info = find_missing_signup_threshold_to_send(
+                    minutes_left,
+                    missing_reminders_sent,
+                )
 
-            if unassigned_players:
-                for threshold_str, label in sorted(
-                    MISSING_SIGNUP_THRESHOLDS.items(),
-                    key=lambda item: int(item[0]),
-                    reverse=True,
-                ):
-                    threshold = int(threshold_str)
+                if threshold_info:
+                    threshold_str, label = threshold_info
 
-                    if (
-                        not missing_reminders_sent.get(threshold_str, False)
-                        and should_send_threshold(minutes_left, threshold, window=300)
-                    ):
-                        mentions = "\n".join(f"<@{user_id}>" for user_id in unassigned_players)
-
-                        await channel.send(
-                            f"⏰ **Raid reminder — {label} remaining**\n"
-                            f"**{title}** starts <t:{start_ts}:R>\n\n"
-                            f"Still missing signup from:\n{mentions}"
+                    await channel.send(
+                        build_missing_signup_reminder_message(
+                            title=title,
+                            label=label,
+                            start_ts=start_ts,
+                            user_ids=missing_players,
                         )
+                    )
 
-                        missing_reminders_sent[threshold_str] = True
-                        changed = True
-                        break
+                    missing_reminders_sent[threshold_str] = True
+                    changed = True
 
             # 2) Signed player reminder
-            users = signup.get("users", {})
-            signed_players = [
-                user_id
-                for user_id, info in users.items()
-                if info.get("status") == "sign"
-            ]
-
+            signed_players = get_signed_players(signup)
             if signed_players:
-                for threshold_str, label in sorted(
-                    SIGNED_PLAYER_THRESHOLDS.items(),
-                    key=lambda item: int(item[0]),
-                    reverse=True,
-                ):
-                    threshold = int(threshold_str)
+                threshold_info = find_signed_player_threshold_to_send(
+                    minutes_left,
+                    signed_reminders_sent,
+                )
 
-                    if (
-                        not signed_reminders_sent.get(threshold_str, False)
-                        and should_send_threshold(minutes_left, threshold, window=300)
-                    ):
-                        mentions = " ".join(f"<@{user_id}>" for user_id in signed_players)
+                if threshold_info:
+                    threshold_str, label = threshold_info
 
-                        await channel.send(
-                            f"⏰ **Raid starts in {label}**\n"
-                            f"{mentions}\n\n"
-                            f"**{title}** starts <t:{start_ts}:R>\n"
-                            f"Don't forget to check your bonus rolls, consumables, and your gear before raid starts — we don't want to lose any time."
+                    await channel.send(
+                        build_signed_player_reminder_message(
+                            title=title,
+                            label=label,
+                            start_ts=start_ts,
+                            user_ids=signed_players,
                         )
+                    )
 
-                        signed_reminders_sent[threshold_str] = True
-                        changed = True
-                        break
+                    signed_reminders_sent[threshold_str] = True
+                    changed = True
 
         if changed:
             save_signups(data)

@@ -1,3 +1,14 @@
+"""
+Facade for signup-related operations used by the Discord view layer.
+
+The goal of this module is to provide one stable import surface for:
+- signup state mutations
+- signup message refresh operations
+
+Views should import from this module instead of importing directly from
+lower-level signup services.
+"""
+
 from services.signup_service import (
     get_signup_user,
     set_user_status,
