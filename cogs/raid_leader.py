@@ -2,14 +2,15 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from services.raid_admin_service import (
+from services.raid.raid_admin_service import (
     update_raid_title,
     update_raid_description,
     update_raid_leader,
     update_raid_time_only,
     update_raid_date_only,
 )
-from services.signup_refresh_service import refresh_signup_message_by_id
+
+from services.signup.signup_refresh_service import refresh_signup_message_by_id
 
 
 class RaidLeaderCommands(commands.Cog):

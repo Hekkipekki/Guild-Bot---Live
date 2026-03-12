@@ -2,17 +2,17 @@ import asyncio
 import discord
 import config
 
-from services.character_service import add_user_character
-from services.signup_service import set_user_spec
-from services.signup_ui_service import (
+from services.character.character_service import add_user_character
+from services.signup.signup_service import set_user_spec
+from services.signup.signup_ui_service import (
     refresh_and_show_signup_options_from_channel,
 )
 from utils.ui_timing import (
     CHARACTER_MENU_AUTO_DELETE_SECONDS,
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
 )
-from views.signup_options import delete_ephemeral_after
-from views.signup.shared import (
+from utils.discord_utils import delete_interaction_after, delete_message_after
+from views.signup.main.shared import (
     parse_spec_emoji,
     parse_class_emoji,
     BackToCharacterMenuButton,
@@ -69,7 +69,7 @@ class AddCharacterClassSelect(discord.ui.Select):
             ),
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
         )
 
 
@@ -119,7 +119,7 @@ class AddCharacterSpecSelect(discord.ui.Select):
         added = add_user_character(interaction.user.id, char)
 
         if not added:
-            from views.signup.character_select_view import CharacterView
+            from views.signup.character.character_select_view import CharacterView
 
             await interaction.response.edit_message(
                 content=f"⚠ **{char['name']}** is already saved.",
@@ -130,7 +130,7 @@ class AddCharacterSpecSelect(discord.ui.Select):
                 ),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
@@ -150,7 +150,7 @@ class AddCharacterSpecSelect(discord.ui.Select):
                 view=None,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 

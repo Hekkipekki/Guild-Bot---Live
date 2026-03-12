@@ -29,6 +29,12 @@
             "class": "Rogue",
             "spec": "Assassination",
             "role": "Melee"
+        },
+        {
+            "name": "Survival Hunter",
+            "class": "Hunter",
+            "spec": "Survival",
+            "role": "Ranged"
         }
     ],
     "248796420880990208": [

@@ -2,11 +2,12 @@ import asyncio
 import discord
 import config
 
-from services.signup_service import remove_user_signup
-from services.signup_refresh_service import refresh_signup_message_by_id
+from services.signup.signup_service import remove_user_signup
+from services.signup.signup_refresh_service import refresh_signup_message_by_id
 from utils.ui_timing import SHORT_CONFIRMATION_DELETE_SECONDS
+from utils.discord_utils import delete_interaction_after
 
-from .helpers import get_signup_entry, delete_ephemeral_after
+from .helpers import get_signup_entry
 from .modals import EditNameModal, EditNoteModal
 from .spec_edit_view import EditSpecView
 
@@ -93,7 +94,7 @@ class RemoveSignupButton(discord.ui.Button):
                 view=None,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, SHORT_CONFIRMATION_DELETE_SECONDS)
+                delete_interaction_after(interaction, SHORT_CONFIRMATION_DELETE_SECONDS)
             )
             return
 
@@ -109,7 +110,7 @@ class RemoveSignupButton(discord.ui.Button):
         )
 
         asyncio.create_task(
-            delete_ephemeral_after(interaction, SHORT_CONFIRMATION_DELETE_SECONDS)
+            delete_interaction_after(interaction, SHORT_CONFIRMATION_DELETE_SECONDS)
         )
 
 

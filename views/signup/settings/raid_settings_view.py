@@ -2,8 +2,8 @@ import asyncio
 import discord
 
 from utils.ui_timing import RAID_CONTROL_AUTO_DELETE_SECONDS
-from views.signup_options.helpers import delete_ephemeral_after
-from views.signup.raid_settings_modals import (
+from utils.discord_utils import delete_interaction_after
+from views.signup.settings.raid_settings_modals import (
     EditRaidTitleModal,
     EditRaidDescriptionModal,
     EditRaidLeaderModal,
@@ -87,14 +87,14 @@ class BackToRaidControlButton(discord.ui.Button):
         self.raid_id = raid_id
 
     async def callback(self, interaction: discord.Interaction):
-        from views.signup.raid_control_view import RaidControlView
+        from views.signup.raid_control.raid_control_view import RaidControlView
 
         await interaction.response.edit_message(
             content="Raid control panel",
             view=RaidControlView(self.raid_id),
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
         )
 
 

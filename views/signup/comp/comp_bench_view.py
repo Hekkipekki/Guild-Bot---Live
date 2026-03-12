@@ -1,10 +1,10 @@
 import asyncio
 import discord
 
-from services.comp_message_service import post_comp_message
+from services.comp.comp_message_service import post_comp_message
 from utils.ui_timing import RAID_CONTROL_AUTO_DELETE_SECONDS, ERROR_MESSAGE_AUTO_DELETE_SECONDS
 from utils.emoji_helpers import parse_spec_emoji
-from views.signup_options.helpers import delete_ephemeral_after
+from utils.discord_utils import delete_interaction_after
 
 
 def _display_role(entry: dict) -> str:
@@ -148,7 +148,7 @@ class BenchSelect(discord.ui.Select):
                     view=None,
                 )
                 asyncio.create_task(
-                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                    delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
                 )
                 return
 
@@ -157,7 +157,7 @@ class BenchSelect(discord.ui.Select):
                 view=None,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
             )
 
         except Exception as e:
@@ -166,7 +166,7 @@ class BenchSelect(discord.ui.Select):
                 view=None,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
 
 

@@ -6,8 +6,8 @@ from utils.ui_timing import (
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
     RAID_CONTROL_AUTO_DELETE_SECONDS,
 )
-from views.signup.raid_control_view import RaidControlView
-from views.signup_options.helpers import delete_ephemeral_after
+from views.signup.raid_control.raid_control_view import RaidControlView
+from utils.discord_utils import delete_interaction_after
 
 
 class RaidControlButton(discord.ui.Button):
@@ -27,7 +27,7 @@ class RaidControlButton(discord.ui.Button):
                 ephemeral=True,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
@@ -39,5 +39,5 @@ class RaidControlButton(discord.ui.Button):
             ephemeral=True,
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
         )

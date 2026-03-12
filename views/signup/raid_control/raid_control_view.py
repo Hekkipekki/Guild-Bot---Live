@@ -1,23 +1,20 @@
 import asyncio
 import discord
 
-from services.roster_comp_service import analyze_roster_comp
-from services.comp_message_service import post_comp_message
-from views.signup.comp_choice_view import CompChoiceView
+from services.comp.roster_comp_service import analyze_roster_comp
+from services.comp.comp_message_service import post_comp_message
+from views.signup.comp.comp_choice_view import CompChoiceView
 
-from services.raid_control_service import (
+from services.raid.raid_control_service import (
     set_player_status,
     remove_player_signup,
 )
-from services.signup_refresh_service import refresh_signup_message_by_id
-from views.signup.raid_control_components import (
+from services.signup.signup_refresh_service import refresh_signup_message_by_id
+from views.signup.raid_control.raid_control_components import (
     RaidControlPlayerSelect,
     RaidControlActionSelect,
 )
-from views.signup_options.helpers import (
-    delete_ephemeral_after,
-    delete_followup_message_after,
-)
+from utils.discord_utils import delete_interaction_after, delete_message_after
 from utils.ui_timing import (
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
     RAID_CONTROL_AUTO_DELETE_SECONDS,
@@ -35,7 +32,7 @@ async def _send_raid_control_error(
             wait=True,
         )
         asyncio.create_task(
-            delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            delete_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
         )
     else:
         await interaction.response.send_message(
@@ -43,7 +40,7 @@ async def _send_raid_control_error(
             ephemeral=True,
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
         )
 
 
@@ -57,7 +54,7 @@ class ChangeSpecRaidControlButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         try:
-            from views.signup.raid_control_spec_view import RaidControlSpecPlayerView
+            from views.signup.raid_control.raid_control_spec_view import RaidControlSpecPlayerView
 
             view = self.view
 
@@ -108,7 +105,7 @@ class BuildCompButton(discord.ui.Button):
             steps = comp_data.get("bench_choice_steps", [])
 
             if steps:
-                from views.signup.comp_bench_view import CompBenchView
+                from views.signup.comp.comp_bench_view import CompBenchView
 
                 first_step = steps[0]
                 count = int(first_step.get("count_to_bench", 0) or 0)
@@ -132,7 +129,7 @@ class BuildCompButton(discord.ui.Button):
                     view=None,
                 )
                 asyncio.create_task(
-                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                    delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
                 )
                 return
 
@@ -141,7 +138,7 @@ class BuildCompButton(discord.ui.Button):
                 view=None,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
             )
 
         except Exception as e:
@@ -160,7 +157,7 @@ class RaidSettingsButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         try:
-            from views.signup.raid_settings_view import RaidSettingsView
+            from views.signup.settings.raid_settings_view import RaidSettingsView
 
             view = self.view
 
@@ -228,7 +225,7 @@ class RaidControlView(discord.ui.View):
                 view=RaidControlView(self.raid_id),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
             )
 
         except Exception as e:

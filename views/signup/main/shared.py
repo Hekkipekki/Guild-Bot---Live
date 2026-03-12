@@ -6,7 +6,7 @@ from utils.ui_timing import (
     CHARACTER_MENU_AUTO_DELETE_SECONDS,
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
 )
-from views.signup_options import delete_ephemeral_after
+from utils.discord_utils import delete_interaction_after, delete_message_after
 
 
 class BackToCharacterMenuButton(discord.ui.Button):
@@ -21,7 +21,7 @@ class BackToCharacterMenuButton(discord.ui.Button):
         self.filter_class = filter_class
 
     async def callback(self, interaction: discord.Interaction):
-        from views.signup.character_select_view import CharacterView
+        from views.signup.character.character_select_view import CharacterView
 
         try:
             await interaction.response.edit_message(
@@ -33,7 +33,7 @@ class BackToCharacterMenuButton(discord.ui.Button):
                 ),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
             )
         except Exception:
             if not interaction.response.is_done():
@@ -42,5 +42,5 @@ class BackToCharacterMenuButton(discord.ui.Button):
                     ephemeral=True,
                 )
                 asyncio.create_task(
-                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                    delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
                 )

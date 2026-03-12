@@ -2,16 +2,13 @@ import asyncio
 import discord
 import config
 
-from services.raid_control_service import (
+from services.raid.raid_control_service import (
     get_players,
     get_valid_specs_for_player,
     change_player_spec,
 )
-from services.signup_refresh_service import refresh_signup_message_by_id
-from views.signup_options.helpers import (
-    delete_ephemeral_after,
-    delete_followup_message_after,
-)
+from services.signup.signup_refresh_service import refresh_signup_message_by_id
+from utils.discord_utils import delete_interaction_after, delete_message_after
 from utils.ui_timing import (
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
     RAID_CONTROL_AUTO_DELETE_SECONDS,
@@ -29,7 +26,7 @@ async def _send_spec_error(
             wait=True,
         )
         asyncio.create_task(
-            delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            delete_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
         )
     else:
         await interaction.response.send_message(
@@ -37,7 +34,7 @@ async def _send_spec_error(
             ephemeral=True,
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
         )
 
 
@@ -88,7 +85,7 @@ class RaidControlSpecPlayerSelect(discord.ui.Select):
                 view=None,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
@@ -180,14 +177,14 @@ class RaidControlSpecSelect(discord.ui.Select):
             )
             return
 
-        from views.signup.raid_control_view import RaidControlView
+        from views.signup.raid_control.raid_control_view import RaidControlView
 
         await interaction.response.edit_message(
             content=f"Player spec changed to **{selected_value}**.",
             view=RaidControlView(self.raid_id),
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
         )
 
 

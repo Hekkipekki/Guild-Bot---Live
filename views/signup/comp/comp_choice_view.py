@@ -1,9 +1,9 @@
 import asyncio
 import discord
 
-from services.comp_message_service import post_comp_message
-from views.signup.comp_bench_view import CompBenchView
-from views.signup_options.helpers import delete_ephemeral_after
+from services.comp.comp_message_service import post_comp_message
+from views.signup.comp.comp_bench_view import CompBenchView
+from utils.discord_utils import delete_interaction_after
 from utils.ui_timing import (
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
     RAID_CONTROL_AUTO_DELETE_SECONDS,
@@ -24,7 +24,7 @@ async def _send_choice_error(interaction: discord.Interaction, message: str) -> 
             ephemeral=True,
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
         )
 
 
@@ -73,7 +73,7 @@ class BuildCompOptionButton(discord.ui.Button):
                     view=None,
                 )
                 asyncio.create_task(
-                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                    delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
                 )
                 return
 
@@ -82,7 +82,7 @@ class BuildCompOptionButton(discord.ui.Button):
                 view=None,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
             )
 
         except Exception as e:
@@ -106,7 +106,7 @@ class CancelCompChoiceButton(discord.ui.Button):
             view=None,
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
         )
 
 

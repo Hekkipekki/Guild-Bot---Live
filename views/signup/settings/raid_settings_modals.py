@@ -1,20 +1,20 @@
 import asyncio
 import discord
 
-from services.raid_admin_service import (
+from services.raid.raid_admin_service import (
     update_raid_title,
     update_raid_description,
     update_raid_leader,
     update_raid_time_only,
     update_raid_date_only,
 )
-from services.comp_message_service import refresh_existing_comp_message
-from services.signup_refresh_service import refresh_signup_message_by_id
+from services.comp.comp_message_service import refresh_existing_comp_message
+from services.signup.signup_refresh_service import refresh_signup_message_by_id
 from utils.ui_timing import (
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
     RAID_CONTROL_AUTO_DELETE_SECONDS,
 )
-from views.signup_options.helpers import delete_ephemeral_after
+from utils.discord_utils import delete_interaction_after
 
 
 async def _refresh_signup_or_fail(
@@ -50,14 +50,14 @@ class EditRaidTitleModal(discord.ui.Modal, title="Edit Raid Title"):
                 ephemeral=True,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
         refreshed_ok, error_message = await _refresh_signup_or_fail(interaction, self.raid_id)
         await refresh_existing_comp_message(interaction.channel, self.raid_id)
 
-        from views.signup.raid_settings_view import RaidSettingsView
+        from views.signup.settings.raid_settings_view import RaidSettingsView
 
         if not refreshed_ok:
             await interaction.response.edit_message(
@@ -65,7 +65,7 @@ class EditRaidTitleModal(discord.ui.Modal, title="Edit Raid Title"):
                 view=RaidSettingsView(str(self.raid_id)),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
@@ -74,7 +74,7 @@ class EditRaidTitleModal(discord.ui.Modal, title="Edit Raid Title"):
             view=RaidSettingsView(str(self.raid_id)),
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
         )
 
 
@@ -100,14 +100,14 @@ class EditRaidDescriptionModal(discord.ui.Modal, title="Edit Raid Description"):
                 ephemeral=True,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
         refreshed_ok, error_message = await _refresh_signup_or_fail(interaction, self.raid_id)
         await refresh_existing_comp_message(interaction.channel, self.raid_id)
 
-        from views.signup.raid_settings_view import RaidSettingsView
+        from views.signup.settings.raid_settings_view import RaidSettingsView
 
         if not refreshed_ok:
             await interaction.response.edit_message(
@@ -115,7 +115,7 @@ class EditRaidDescriptionModal(discord.ui.Modal, title="Edit Raid Description"):
                 view=RaidSettingsView(str(self.raid_id)),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
@@ -124,7 +124,7 @@ class EditRaidDescriptionModal(discord.ui.Modal, title="Edit Raid Description"):
             view=RaidSettingsView(str(self.raid_id)),
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
         )
 
 
@@ -148,14 +148,14 @@ class EditRaidLeaderModal(discord.ui.Modal, title="Edit Raid Leader"):
                 ephemeral=True,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
         refreshed_ok, error_message = await _refresh_signup_or_fail(interaction, self.raid_id)
         await refresh_existing_comp_message(interaction.channel, self.raid_id)
 
-        from views.signup.raid_settings_view import RaidSettingsView
+        from views.signup.settings.raid_settings_view import RaidSettingsView
 
         if not refreshed_ok:
             await interaction.response.edit_message(
@@ -163,7 +163,7 @@ class EditRaidLeaderModal(discord.ui.Modal, title="Edit Raid Leader"):
                 view=RaidSettingsView(str(self.raid_id)),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
@@ -172,7 +172,7 @@ class EditRaidLeaderModal(discord.ui.Modal, title="Edit Raid Leader"):
             view=RaidSettingsView(str(self.raid_id)),
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
         )
 
 
@@ -199,14 +199,14 @@ class EditRaidDateModal(discord.ui.Modal, title="Edit Raid Date"):
                 ephemeral=True,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
         refreshed_ok, refresh_error = await _refresh_signup_or_fail(interaction, self.raid_id)
         await refresh_existing_comp_message(interaction.channel, self.raid_id)
 
-        from views.signup.raid_settings_view import RaidSettingsView
+        from views.signup.settings.raid_settings_view import RaidSettingsView
 
         if not refreshed_ok:
             await interaction.response.edit_message(
@@ -214,7 +214,7 @@ class EditRaidDateModal(discord.ui.Modal, title="Edit Raid Date"):
                 view=RaidSettingsView(str(self.raid_id)),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
@@ -223,7 +223,7 @@ class EditRaidDateModal(discord.ui.Modal, title="Edit Raid Date"):
             view=RaidSettingsView(str(self.raid_id)),
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
         )
 
 
@@ -250,14 +250,14 @@ class EditRaidTimeModal(discord.ui.Modal, title="Edit Raid Time"):
                 ephemeral=True,
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
         refreshed_ok, refresh_error = await _refresh_signup_or_fail(interaction, self.raid_id)
         await refresh_existing_comp_message(interaction.channel, self.raid_id)
         
-        from views.signup.raid_settings_view import RaidSettingsView
+        from views.signup.settings.raid_settings_view import RaidSettingsView
 
         if not refreshed_ok:
             await interaction.response.edit_message(
@@ -265,7 +265,7 @@ class EditRaidTimeModal(discord.ui.Modal, title="Edit Raid Time"):
                 view=RaidSettingsView(str(self.raid_id)),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
@@ -274,5 +274,5 @@ class EditRaidTimeModal(discord.ui.Modal, title="Edit Raid Time"):
             view=RaidSettingsView(str(self.raid_id)),
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
         )

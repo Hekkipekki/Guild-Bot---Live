@@ -1,19 +1,19 @@
 import asyncio
 import discord
 
-from services.character_service import update_character_name, update_character_spec
-from services.signup_service import (
+from services.character.character_service import update_character_name, update_character_spec
+from services.signup.signup_service import (
     update_user_name,
     update_user_note,
 )
-from services.signup_ui_service import (
+from services.signup.signup_ui_service import (
     refresh_main_signup_from_channel,
 )
 from utils.ui_timing import (
     SIGNUP_OPTIONS_AUTO_DELETE_SECONDS,
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
 )
-from .helpers import get_signup_entry, delete_ephemeral_after
+from .helpers import get_signup_entry, delete_interaction_after
 from .embeds import build_signup_options_embed
 
 
@@ -23,7 +23,7 @@ async def _show_modal_error(interaction: discord.Interaction, message: str) -> N
 
     await interaction.response.send_message(message, ephemeral=True)
     asyncio.create_task(
-        delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+        delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
     )
 
 
@@ -79,7 +79,7 @@ class EditNameModal(discord.ui.Modal, title="Edit Character Name"):
         )
 
         asyncio.create_task(
-            delete_ephemeral_after(interaction, SIGNUP_OPTIONS_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, SIGNUP_OPTIONS_AUTO_DELETE_SECONDS)
         )
 
 
@@ -126,5 +126,5 @@ class EditNoteModal(discord.ui.Modal, title="Edit Note"):
         )
 
         asyncio.create_task(
-            delete_ephemeral_after(interaction, SIGNUP_OPTIONS_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, SIGNUP_OPTIONS_AUTO_DELETE_SECONDS)
         )

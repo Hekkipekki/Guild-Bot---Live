@@ -2,7 +2,7 @@ import asyncio
 import discord
 import config
 
-from services.signup_ui_service import (
+from services.signup.signup_ui_service import (
     refresh_and_show_signup_options_from_interaction,
 )
 from utils.emoji_helpers import parse_class_emoji
@@ -10,11 +10,8 @@ from utils.ui_timing import (
     CHARACTER_MENU_AUTO_DELETE_SECONDS,
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
 )
-from views.signup_options import (
-    delete_ephemeral_after,
-    delete_followup_message_after,
-)
-from services.signup_service import set_user_spec
+from utils.discord_utils import delete_interaction_after, delete_message_after
+from services.signup.signup_service import set_user_spec
 
 
 class ClassDropdown(discord.ui.Select):
@@ -43,7 +40,7 @@ class ClassDropdown(discord.ui.Select):
         try:
             selected_class = self.values[0]
 
-            from services.character_service import get_user_characters
+            from services.character.character_service import get_user_characters
             from views.character_select import AddCharacterSpecView
 
             characters = get_user_characters(interaction.user.id)
@@ -71,7 +68,7 @@ class ClassDropdown(discord.ui.Select):
                         ephemeral=True,
                     )
                     asyncio.create_task(
-                        delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                        delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
                     )
                     return
 
@@ -96,7 +93,7 @@ class ClassDropdown(discord.ui.Select):
                 ),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
             )
 
         except Exception as e:
@@ -107,7 +104,7 @@ class ClassDropdown(discord.ui.Select):
                     wait=True,
                 )
                 asyncio.create_task(
-                    delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                    delete_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
                 )
             else:
                 await interaction.response.send_message(
@@ -115,5 +112,5 @@ class ClassDropdown(discord.ui.Select):
                     ephemeral=True,
                 )
                 asyncio.create_task(
-                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                    delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
                 )

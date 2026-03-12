@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands, tasks
 
 from data.signup_store import load_signups, save_signups
-from services.reminder_service import (
+from services.reminder.reminder_service import (
     ensure_missing_signup_reminder_state,
     ensure_signed_player_reminder_state,
     get_signup_title,

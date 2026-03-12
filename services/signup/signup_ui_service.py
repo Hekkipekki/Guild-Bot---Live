@@ -1,16 +1,13 @@
 import asyncio
 import discord
 
-from services.signup_refresh_service import (
+from services.signup.signup_refresh_service import (
     refresh_signup_message,
     refresh_signup_message_by_id,
 )
 from views.signup_options.embeds import build_signup_options_embed
-from views.signup_options.helpers import (
-    get_signup_entry,
-    delete_ephemeral_after,
-    delete_followup_message_after,
-)
+from views.signup_options.helpers import get_signup_entry
+from utils.discord_utils import delete_interaction_after, delete_message_after
 from utils.ui_timing import (
     SIGNUP_OPTIONS_AUTO_DELETE_SECONDS,
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
@@ -28,7 +25,7 @@ async def _send_error_response(
             wait=True,
         )
         asyncio.create_task(
-            delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            delete_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
         )
     else:
         await interaction.response.send_message(
@@ -36,7 +33,7 @@ async def _send_error_response(
             ephemeral=True,
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
         )
 
 
@@ -122,14 +119,14 @@ async def show_signup_options_panel(
             ephemeral=True,
             wait=True,
         )
-        asyncio.create_task(delete_followup_message_after(msg, delete_after))
+        asyncio.create_task(delete_message_after(msg, delete_after))
     else:
         await interaction.response.edit_message(
             content=None,
             embed=build_signup_options_embed(entry),
             view=SignupOptionsView(raid_id, user_id),
         )
-        asyncio.create_task(delete_ephemeral_after(interaction, delete_after))
+        asyncio.create_task(delete_interaction_after(interaction, delete_after))
 
     return True
 

@@ -1,6 +1,6 @@
 import discord
 
-from services.raid_control_service import get_players
+from services.raid.raid_control_service import get_players
 
 
 ACTION_VALUES = {

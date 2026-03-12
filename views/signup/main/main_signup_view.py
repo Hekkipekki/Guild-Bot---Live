@@ -1,8 +1,8 @@
 import discord
 
-from views.signup.status_buttons import SignupStatusButton
-from views.signup.class_dropdown import ClassDropdown
-from views.signup.raid_control_button import RaidControlButton
+from views.signup.main.status_buttons import SignupStatusButton
+from views.signup.main.class_dropdown import ClassDropdown
+from views.signup.raid_control.raid_control_button import RaidControlButton
 
 
 class SignupView(discord.ui.View):

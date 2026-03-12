@@ -1,7 +1,7 @@
 import discord
 import config
 
-from .helpers import AUTO_DELETE_SECONDS
+from utils.ui_timing import SIGNUP_OPTIONS_AUTO_DELETE_SECONDS
 
 
 def build_signup_options_embed(entry: dict) -> discord.Embed:

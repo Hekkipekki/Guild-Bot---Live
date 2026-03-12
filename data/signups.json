@@ -289,5 +289,154 @@
     "signed_player_reminders_sent": {
       "60": true
     }
+  },
+  "1481704786402349242": {
+    "title": "HC Progression - Template Preview",
+    "description": "Visual preview with fake raid roster",
+    "leader": "Hekkipekki / Rhegaran",
+    "start_ts": 1773858600,
+    "channel_id": 1480191818229350532,
+    "users": {
+      "demo_0": {
+        "display_name": "Mendrina",
+        "class": "Warrior",
+        "spec": "ProtectionWarrior",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1773336351.583587
+      },
+      "demo_1": {
+        "display_name": "Shadowzap",
+        "class": "Paladin",
+        "spec": "ProtectionPaladin",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1773336352.583587
+      },
+      "demo_2": {
+        "display_name": "Soulrot",
+        "class": "Priest",
+        "spec": "Discipline",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773336353.583587
+      },
+      "demo_3": {
+        "display_name": "Darkmoo",
+        "class": "Monk",
+        "spec": "Mistweaver",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773336354.583587
+      },
+      "demo_4": {
+        "display_name": "Glimmer",
+        "class": "Priest",
+        "spec": "HolyPriest",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773336355.583587
+      },
+      "demo_5": {
+        "display_name": "Moonbeef",
+        "class": "Mage",
+        "spec": "Arcane",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773336356.583587
+      },
+      "demo_6": {
+        "display_name": "Sneakstab",
+        "class": "Druid",
+        "spec": "Feral",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773336357.583587
+      },
+      "demo_7": {
+        "display_name": "Smitey",
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773336358.583587
+      },
+      "demo_8": {
+        "display_name": "Holytoast",
+        "class": "Hunter",
+        "spec": "Marksmanship",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773336359.583587
+      },
+      "demo_9": {
+        "display_name": "Thorgrim",
+        "class": "Warrior",
+        "spec": "Fury",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773336360.583587
+      },
+      "demo_10": {
+        "display_name": "Stonepaw",
+        "class": "Rogue",
+        "spec": "Combat",
+        "role": "Melee",
+        "status": "late",
+        "timestamp": 1773336361.583587
+      },
+      "demo_11": {
+        "display_name": "Critlord",
+        "class": "Priest",
+        "spec": "HolyPriest",
+        "role": "Healer",
+        "status": "tentative",
+        "timestamp": 1773336362.583587
+      },
+      "demo_12": {
+        "display_name": "Hexella",
+        "class": "Rogue",
+        "spec": "Subtlety",
+        "role": "Melee",
+        "status": "absence",
+        "timestamp": 1773336363.583587
+      },
+      "demo_13": {
+        "display_name": "Clawbert",
+        "class": "Paladin",
+        "spec": "Retribution",
+        "role": "Melee",
+        "status": "bench",
+        "timestamp": 1773336364.583587
+      },
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "timestamp": 1773336357.7724648,
+        "name": "Brummelibrum",
+        "note": "",
+        "status": "sign"
+      }
+    },
+    "expected_players": [
+      "141881090913599488",
+      "771806222525267968",
+      "251004817844076554",
+      "260495039686246400",
+      "321966396864987137",
+      "369109810311987200",
+      "239532428073500672",
+      "344496860855009280",
+      "710915046200574073",
+      "248796420880990208"
+    ],
+    "missing_signup_reminders_sent": {
+      "2880": false,
+      "1440": false
+    },
+    "signed_player_reminders_sent": {
+      "60": false
+    }
   }
 }

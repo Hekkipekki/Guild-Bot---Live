@@ -1,14 +1,14 @@
 import asyncio
 import discord
 
-from services.character_service import get_user_characters, remove_user_character
+from services.character.character_service import get_user_characters, remove_user_character
 from utils.ui_timing import (
     CHARACTER_MENU_AUTO_DELETE_SECONDS,
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
     SHORT_CONFIRMATION_DELETE_SECONDS,
 )
-from views.signup_options import delete_ephemeral_after
-from views.signup.shared import parse_spec_emoji, BackToCharacterMenuButton
+from utils.discord_utils import delete_interaction_after, delete_message_after
+from views.signup.main.shared import parse_spec_emoji, BackToCharacterMenuButton
 
 
 class RemoveCharacterSelect(discord.ui.Select):
@@ -57,7 +57,7 @@ class RemoveCharacterSelect(discord.ui.Select):
         if value == "none":
             await interaction.response.defer()
             asyncio.create_task(
-                delete_ephemeral_after(interaction, SHORT_CONFIRMATION_DELETE_SECONDS)
+                delete_interaction_after(interaction, SHORT_CONFIRMATION_DELETE_SECONDS)
             )
             return
 
@@ -73,7 +73,7 @@ class RemoveCharacterSelect(discord.ui.Select):
                 ),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
@@ -87,7 +87,7 @@ class RemoveCharacterSelect(discord.ui.Select):
                 ),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
@@ -109,7 +109,7 @@ class RemoveCharacterSelect(discord.ui.Select):
                 ),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
@@ -124,7 +124,7 @@ class RemoveCharacterSelect(discord.ui.Select):
                 ),
             )
             asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
@@ -137,7 +137,7 @@ class RemoveCharacterSelect(discord.ui.Select):
             ),
         )
         asyncio.create_task(
-            delete_ephemeral_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+            delete_interaction_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
         )
 
 

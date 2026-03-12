@@ -2,12 +2,13 @@ import discord
 from discord.ext import commands
 
 from data.signup_store import load_signups, save_signups, remove_message_signup
-from services.raid_preset_service import (
+from services.raid.raid_preset_service import (
     build_wednesday_signup,
     build_sunday_signup,
     build_template_signup,
 )
-from services.signup_message_service import send_signup_message
+
+from services.signup.signup_message_service import send_signup_message
 
 
 class SignupCommands(commands.Cog):

@@ -1,9 +1,9 @@
 import discord
 import config
 
-from services.character_service import update_character_spec
-from services.signup_service import update_user_spec
-from services.signup_ui_service import (
+from services.character.character_service import update_character_spec
+from services.signup.signup_service import update_user_spec
+from services.signup.signup_ui_service import (
     refresh_and_show_signup_options_from_channel,
 )
 from .helpers import get_signup_entry, parse_spec_emoji

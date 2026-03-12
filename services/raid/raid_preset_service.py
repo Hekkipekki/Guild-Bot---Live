@@ -1,5 +1,5 @@
-from services.signup_preset_service import build_signup_payload
-from services.signup_template_service import build_fake_users
+from services.signup.signup_preset_service import build_signup_payload
+from services.signup.signup_template_service import build_fake_users
 from utils.time_helpers import next_weekday
 
 
