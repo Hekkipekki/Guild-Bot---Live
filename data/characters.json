@@ -15,8 +15,8 @@
         {
             "name": "test",
             "class": "Warrior",
-            "spec": "ProtectionWarrior",
-            "role": "Tank"
+            "spec": "Arms",
+            "role": "Melee"
         },
         {
             "name": "Affliction Warlock",

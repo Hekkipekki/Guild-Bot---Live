@@ -29,6 +29,8 @@ def build_comp_embed(comp_data: dict) -> discord.Embed:
     leader = comp_data.get("leader", "")
     start_ts = comp_data.get("start_ts")
 
+    bench_icon = getattr(config, "SUMMARY_EMOJIS", {}).get("Bench", "🪑")
+
     embed = discord.Embed(
         title=title,
         description=description,
@@ -58,7 +60,7 @@ def build_comp_embed(comp_data: dict) -> discord.Embed:
     if bench_players:
         embed.add_field(name="\u200b", value="\u200b", inline=False)
         embed.add_field(
-            name=f"Bench ({len(bench_players)})",
+            name=f"{bench_icon} Bench ({len(bench_players)})",
             value=_group_value(bench_players),
             inline=False,
         )

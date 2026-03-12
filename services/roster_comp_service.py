@@ -90,37 +90,39 @@ def _build_groups(comp: dict) -> tuple[list[tuple[str, dict]], list[tuple[str, d
     return group_1, group_2
 
 
-def _get_bench_choice_candidates(
+def _get_bench_choice_steps(
     grouped: dict[str, list[tuple[str, dict]]],
     role_targets: dict[str, int],
-) -> list[tuple[str, dict]]:
+) -> list[dict]:
     """
-    Return the full signed role pool for the contested role.
+    Returns a list of manual bench selection steps.
 
-    Examples:
-    - if signed DPS > target DPS, return all signed DPS
-    - if signed Healers > target Healers, return all signed Healers
+    Example:
+    - signed Healers = 3, target Healers = 2
+    - signed DPS = 7, target DPS = 6
 
-    Benched players are never included because this function only receives
-    grouped signed players.
+    returns:
+    [
+        {"role": "Healer", "count_to_bench": 1, "candidates": [...]},
+        {"role": "DPS", "count_to_bench": 1, "candidates": [...]},
+    ]
     """
-    contested_roles = []
+    steps = []
 
     for role_name in ("Healer", "DPS"):
         signed_count = len(grouped[role_name])
         target_count = role_targets.get(role_name, 0)
 
         if signed_count > target_count:
-            contested_roles.append(role_name)
+            steps.append(
+                {
+                    "role": role_name,
+                    "count_to_bench": signed_count - target_count,
+                    "candidates": list(grouped[role_name]),
+                }
+            )
 
-    if not contested_roles:
-        return []
-
-    # In your use case, ambiguous 10-man comp decisions are typically between
-    # healer vs DPS count. If both somehow exceed, prefer the role whose target
-    # changed in the chosen setup.
-    contested_role = contested_roles[0]
-    return list(grouped[contested_role])
+    return steps
 
 
 def _build_comp_payload(
@@ -131,11 +133,20 @@ def _build_comp_payload(
     grouped_signed: dict[str, list[tuple[str, dict]]],
     comp: dict,
 ) -> dict:
-    overflow_signed = [
-        (user_id, entry)
-        for user_id, entry in signed_players
-        if user_id not in comp["selected_ids"]
-    ]
+    bench_choice_steps = _get_bench_choice_steps(
+        grouped_signed,
+        comp["role_targets"],
+    )
+
+    # If manual selection is needed for any role, do not auto-bench overflow yet.
+    if bench_choice_steps:
+        overflow_signed = []
+    else:
+        overflow_signed = [
+            (user_id, entry)
+            for user_id, entry in signed_players
+            if user_id not in comp["selected_ids"]
+        ]
 
     bench_players = existing_bench + overflow_signed
     group_1, group_2 = _build_groups(comp)
@@ -154,10 +165,7 @@ def _build_comp_payload(
         "mentions": [f"<@{user_id}>" for user_id, _ in comp["selected"]],
         "comp_label": comp["label"],
         "role_targets": comp["role_targets"],
-        "bench_choice_candidates": _get_bench_choice_candidates(
-            grouped_signed,
-            comp["role_targets"],
-        ),
+        "bench_choice_steps": bench_choice_steps,
     }
 
 

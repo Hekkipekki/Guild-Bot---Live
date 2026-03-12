@@ -3,10 +3,7 @@ import discord
 
 from services.comp_message_service import post_comp_message
 from views.signup.comp_bench_view import CompBenchView
-from views.signup_options.helpers import (
-    delete_ephemeral_after,
-    delete_followup_message_after,
-)
+from views.signup_options.helpers import delete_ephemeral_after
 from utils.ui_timing import (
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
     RAID_CONTROL_AUTO_DELETE_SECONDS,
@@ -20,9 +17,7 @@ async def _send_choice_error(interaction: discord.Interaction, message: str) -> 
             ephemeral=True,
             wait=True,
         )
-        asyncio.create_task(
-            delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-        )
+        asyncio.create_task(msg.delete(delay=ERROR_MESSAGE_AUTO_DELETE_SECONDS))
     else:
         await interaction.response.send_message(
             message,
@@ -31,6 +26,19 @@ async def _send_choice_error(interaction: discord.Interaction, message: str) -> 
         asyncio.create_task(
             delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
         )
+
+
+def _build_bench_prompt(comp_data: dict) -> str:
+    steps = comp_data.get("bench_choice_steps", [])
+    if not steps:
+        return "Select which player should be benched:"
+
+    step = steps[0]
+    count = int(step.get("count_to_bench", 0) or 0)
+    role = step.get("role") or "player"
+    player_word = "player" if count == 1 else "players"
+
+    return f"Select {count} {role} {player_word} to bench."
 
 
 class BuildCompOptionButton(discord.ui.Button):
@@ -45,22 +53,14 @@ class BuildCompOptionButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         try:
             comp_data = self.comp_data
-            candidates = comp_data.get("bench_choice_candidates", [])
+            steps = comp_data.get("bench_choice_steps", [])
 
-            # Multiple valid candidates -> let raid leader choose manually
-            if len(candidates) > 1:
-                await interaction.response.send_message(
-                    "Select which player should be benched:",
-                    view=CompBenchView(comp_data, candidates),
-                    ephemeral=True,
-                )
-                asyncio.create_task(
-                    delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            if steps:
+                await interaction.response.edit_message(
+                    content=_build_bench_prompt(comp_data),
+                    view=CompBenchView(comp_data),
                 )
                 return
-
-            # No real bench decision needed (or only one unavoidable candidate)
-            await interaction.response.defer(ephemeral=True)
 
             ok, message = await post_comp_message(
                 interaction.channel,
@@ -68,23 +68,21 @@ class BuildCompOptionButton(discord.ui.Button):
             )
 
             if not ok:
-                msg = await interaction.followup.send(
-                    message,
-                    ephemeral=True,
-                    wait=True,
+                await interaction.response.edit_message(
+                    content=message,
+                    view=None,
                 )
                 asyncio.create_task(
-                    delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
                 )
                 return
 
-            msg = await interaction.followup.send(
-                "Comp posted.",
-                ephemeral=True,
-                wait=True,
+            await interaction.response.edit_message(
+                content="Comp posted.",
+                view=None,
             )
             asyncio.create_task(
-                delete_followup_message_after(msg, RAID_CONTROL_AUTO_DELETE_SECONDS)
+                delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
             )
 
         except Exception as e:

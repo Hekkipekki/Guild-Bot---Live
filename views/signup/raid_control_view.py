@@ -9,7 +9,6 @@ from services.raid_control_service import (
     set_player_status,
     remove_player_signup,
 )
-from services.comp_message_service import post_comp_message
 from services.signup_refresh_service import refresh_signup_message_by_id
 from views.signup.raid_control_components import (
     RaidControlPlayerSelect,
@@ -48,67 +47,6 @@ async def _send_raid_control_error(
         )
 
 
-class ApplyRaidControlButton(discord.ui.Button):
-    def __init__(self):
-        super().__init__(
-            label="Apply",
-            style=discord.ButtonStyle.primary,
-            row=2,
-        )
-
-    async def callback(self, interaction: discord.Interaction):
-        try:
-            view = self.view
-
-            if not view.selected_user_id:
-                await _send_raid_control_error(interaction, "Select a player first.")
-                return
-
-            if not view.selected_action:
-                await _send_raid_control_error(interaction, "Select an action first.")
-                return
-
-            if view.selected_action == "remove":
-                ok = remove_player_signup(view.raid_id, view.selected_user_id)
-                action_text = "removed"
-            else:
-                ok = set_player_status(
-                    view.raid_id,
-                    view.selected_user_id,
-                    view.selected_action,
-                )
-                action_text = f"set to {view.selected_action}"
-
-            if not ok:
-                await _send_raid_control_error(
-                    interaction,
-                    "Could not update that player. The raid or signup may no longer exist.",
-                )
-                return
-
-            refreshed = await refresh_signup_message_by_id(interaction.channel, int(view.raid_id))
-            if not refreshed:
-                await _send_raid_control_error(
-                    interaction,
-                    "Player updated, but the raid signup no longer exists.",
-                )
-                return
-
-            await interaction.response.send_message(
-                f"Player {action_text}.",
-                ephemeral=True,
-            )
-            asyncio.create_task(
-                delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
-            )
-
-        except Exception as e:
-            await _send_raid_control_error(
-                interaction,
-                f"Raid control failed: {type(e).__name__}: {e}",
-            )
-
-
 class ChangeSpecRaidControlButton(discord.ui.Button):
     def __init__(self):
         super().__init__(
@@ -119,18 +57,13 @@ class ChangeSpecRaidControlButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         try:
-            from views.signup.raid_control_spec_view import RaidControlSpecView
+            from views.signup.raid_control_spec_view import RaidControlSpecPlayerView
 
             view = self.view
-            spec_view = RaidControlSpecView(view.raid_id)
 
-            await interaction.response.send_message(
-                "Change a player's spec for this raid only.",
-                view=spec_view,
-                ephemeral=True,
-            )
-            asyncio.create_task(
-                delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            await interaction.response.edit_message(
+                content="Select a player to change spec for this raid only.",
+                view=RaidControlSpecPlayerView(view.raid_id),
             )
 
         except Exception as e:
@@ -140,61 +73,12 @@ class ChangeSpecRaidControlButton(discord.ui.Button):
             )
 
 
-class RefreshRaidControlButton(discord.ui.Button):
-    def __init__(self):
-        super().__init__(
-            label="Refresh Raid",
-            style=discord.ButtonStyle.secondary,
-            row=3,
-        )
-
-    async def callback(self, interaction: discord.Interaction):
-        try:
-            view = self.view
-            refreshed = await refresh_signup_message_by_id(interaction.channel, int(view.raid_id))
-
-            if not refreshed:
-                await _send_raid_control_error(
-                    interaction,
-                    "⚠ Raid signup no longer exists.",
-                )
-                return
-
-            await interaction.response.send_message(
-                "Raid refreshed.",
-                ephemeral=True,
-            )
-            asyncio.create_task(
-                delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
-            )
-
-        except Exception as e:
-            await _send_raid_control_error(
-                interaction,
-                f"Failed to refresh raid: {type(e).__name__}: {e}",
-            )
-
-
-class RaidControlView(discord.ui.View):
-    def __init__(self, raid_id: str):
-        super().__init__(timeout=120)
-        self.raid_id = raid_id
-        self.selected_user_id = None
-        self.selected_action = None
-
-        self.add_item(RaidControlPlayerSelect(raid_id))
-        self.add_item(RaidControlActionSelect())
-        self.add_item(ApplyRaidControlButton())
-        self.add_item(ChangeSpecRaidControlButton())
-        self.add_item(RefreshRaidControlButton())
-        self.add_item(BuildCompButton())
-
 class BuildCompButton(discord.ui.Button):
     def __init__(self):
         super().__init__(
             label="Build Comp",
             style=discord.ButtonStyle.success,
-            row=3,
+            row=2,
         )
 
     async def callback(self, interaction: discord.Interaction):
@@ -211,22 +95,31 @@ class BuildCompButton(discord.ui.Button):
                 return
 
             if state == "ambiguous":
-                await interaction.response.send_message(
-                    "Two valid 10-man comps were found. Choose which one to post.",
+                await interaction.response.edit_message(
+                    content="Two valid 10-man comps were found. Choose which one to continue with.",
                     view=CompChoiceView(
                         payload["option_226"],
                         payload["option_235"],
                     ),
-                    ephemeral=True,
-                )
-                asyncio.create_task(
-                    delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
                 )
                 return
 
             comp_data = payload["comp_data"]
+            steps = comp_data.get("bench_choice_steps", [])
 
-            await interaction.response.defer(ephemeral=True)
+            if steps:
+                from views.signup.comp_bench_view import CompBenchView
+
+                first_step = steps[0]
+                count = int(first_step.get("count_to_bench", 0) or 0)
+                role = first_step.get("role") or "player"
+                player_word = "player" if count == 1 else "players"
+
+                await interaction.response.edit_message(
+                    content=f"Select {count} {role} {player_word} to bench.",
+                    view=CompBenchView(comp_data),
+                )
+                return
 
             ok, message = await post_comp_message(
                 interaction.channel,
@@ -234,27 +127,112 @@ class BuildCompButton(discord.ui.Button):
             )
 
             if not ok:
-                msg = await interaction.followup.send(
-                    message,
-                    ephemeral=True,
-                    wait=True,
+                await interaction.response.edit_message(
+                    content=message,
+                    view=None,
                 )
                 asyncio.create_task(
-                    delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
                 )
                 return
 
-            msg = await interaction.followup.send(
-                "Comp message posted.",
-                ephemeral=True,
-                wait=True,
+            await interaction.response.edit_message(
+                content="Comp message posted.",
+                view=None,
             )
             asyncio.create_task(
-                delete_followup_message_after(msg, RAID_CONTROL_AUTO_DELETE_SECONDS)
+                delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
             )
 
         except Exception as e:
             await _send_raid_control_error(
                 interaction,
                 f"Build Comp failed: {type(e).__name__}: {e}",
+            )
+
+class RaidSettingsButton(discord.ui.Button):
+    def __init__(self):
+        super().__init__(
+            label="Raid Settings",
+            style=discord.ButtonStyle.secondary,
+            row=2,
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        try:
+            from views.signup.raid_settings_view import RaidSettingsView
+
+            view = self.view
+
+            await interaction.response.edit_message(
+                content="Raid settings",
+                view=RaidSettingsView(view.raid_id),
+            )
+
+        except Exception as e:
+            await _send_raid_control_error(
+                interaction,
+                f"Raid Settings failed: {type(e).__name__}: {e}",
+            )
+
+class RaidControlView(discord.ui.View):
+    def __init__(self, raid_id: str):
+        super().__init__(timeout=120)
+        self.raid_id = raid_id
+        self.selected_user_id = None
+        self.selected_action = None
+
+        self.add_item(RaidControlPlayerSelect(raid_id))
+        self.add_item(RaidControlActionSelect())
+        self.add_item(ChangeSpecRaidControlButton())
+        self.add_item(RaidSettingsButton())
+        self.add_item(BuildCompButton())
+
+    async def try_apply_action(self, interaction: discord.Interaction):
+        try:
+            if not self.selected_user_id or not self.selected_action:
+                await interaction.response.defer()
+                return
+
+            if self.selected_action == "remove":
+                ok = remove_player_signup(self.raid_id, self.selected_user_id)
+                action_text = "removed"
+            else:
+                ok = set_player_status(
+                    self.raid_id,
+                    self.selected_user_id,
+                    self.selected_action,
+                )
+                action_text = f"set to {self.selected_action}"
+
+            if not ok:
+                await _send_raid_control_error(
+                    interaction,
+                    "Could not update that player. The raid or signup may no longer exist.",
+                )
+                return
+
+            refreshed = await refresh_signup_message_by_id(interaction.channel, int(self.raid_id))
+            if not refreshed:
+                await _send_raid_control_error(
+                    interaction,
+                    "Player updated, but the raid signup no longer exists.",
+                )
+                return
+
+            self.selected_user_id = None
+            self.selected_action = None
+
+            await interaction.response.edit_message(
+                content=f"Player {action_text}.",
+                view=RaidControlView(self.raid_id),
+            )
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            )
+
+        except Exception as e:
+            await _send_raid_control_error(
+                interaction,
+                f"Raid control failed: {type(e).__name__}: {e}",
             )

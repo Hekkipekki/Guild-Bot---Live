@@ -3,10 +3,8 @@ import discord
 
 from services.comp_message_service import post_comp_message
 from utils.ui_timing import RAID_CONTROL_AUTO_DELETE_SECONDS, ERROR_MESSAGE_AUTO_DELETE_SECONDS
-from views.signup_options.helpers import (
-    delete_ephemeral_after,
-    delete_followup_message_after,
-)
+from utils.emoji_helpers import parse_spec_emoji
+from views.signup_options.helpers import delete_ephemeral_after
 
 
 def _display_role(entry: dict) -> str:
@@ -38,11 +36,11 @@ def _group_signed(players: list[tuple[str, dict]]) -> dict[str, list[tuple[str, 
     return grouped
 
 
-def _rebuild_comp_from_choice(comp_data: dict, benched_user_id: str) -> dict:
+def _consume_next_bench_step(comp_data: dict, benched_user_ids: set[str]) -> dict:
     signed_players = [
         (user_id, entry)
         for user_id, entry in comp_data.get("signed_players", [])
-        if user_id != benched_user_id
+        if user_id not in benched_user_ids
     ]
 
     grouped = _group_signed(_sort_by_timestamp(signed_players))
@@ -63,106 +61,118 @@ def _rebuild_comp_from_choice(comp_data: dict, benched_user_id: str) -> dict:
 
     group_2 = remaining_dps
 
-    existing_bench = [
-        p for p in comp_data.get("bench_players", [])
-        if p[0] not in selected_ids
-    ]
-
-    manually_benched_choice = next(
-        ((user_id, entry) for user_id, entry in comp_data.get("signed_players", []) if user_id == benched_user_id),
-        None,
-    )
-
-    overflow_signed = [
-        (user_id, entry)
-        for user_id, entry in signed_players
-        if user_id not in selected_ids
-    ]
-
+    existing_bench = list(comp_data.get("bench_players", []))
     new_bench = list(existing_bench)
-    if manually_benched_choice and all(manually_benched_choice[0] != uid for uid, _ in new_bench):
-        new_bench.append(manually_benched_choice)
 
-    for user_id, entry in overflow_signed:
-        if all(user_id != existing_id for existing_id, _ in new_bench):
+    for user_id, entry in comp_data.get("signed_players", []):
+        if user_id in benched_user_ids and all(user_id != existing_id for existing_id, _ in new_bench):
             new_bench.append((user_id, entry))
 
+    remaining_steps = list(comp_data.get("bench_choice_steps", []))
+    if remaining_steps:
+        remaining_steps.pop(0)
+
     updated = dict(comp_data)
+    updated["signed_players"] = signed_players
     updated["selected_players"] = selected_players
     updated["mentions"] = [f"<@{user_id}>" for user_id, _ in selected_players]
     updated["group_1"] = group_1
     updated["group_2"] = group_2
     updated["bench_players"] = new_bench
+    updated["bench_choice_steps"] = remaining_steps
+
+    if not remaining_steps:
+        for user_id, entry in signed_players:
+            if user_id not in selected_ids and all(user_id != existing_id for existing_id, _ in new_bench):
+                new_bench.append((user_id, entry))
+        updated["bench_players"] = new_bench
 
     return updated
 
 
-class BenchSelect(discord.ui.Select):
-    def __init__(self, comp_data: dict, candidates: list[tuple[str, dict]]):
-        options = []
+def _build_step_prompt(step: dict) -> str:
+    count = int(step.get("count_to_bench", 0) or 0)
+    role = step.get("role") or "player"
+    player_word = "player" if count == 1 else "players"
+    return f"Select {count} {role} {player_word} to bench."
 
+
+class BenchSelect(discord.ui.Select):
+    def __init__(self, comp_data: dict, step: dict):
+        self.comp_data = comp_data
+        self.step = step
+
+        bench_count = max(1, int(step.get("count_to_bench", 1)))
+        candidates = step.get("candidates", [])
+
+        options = []
         for user_id, entry in candidates:
+            spec = entry.get("spec", "")
             options.append(
                 discord.SelectOption(
                     label=_player_label(user_id, entry)[:100],
                     value=user_id,
+                    emoji=parse_spec_emoji(spec),
                 )
             )
 
         super().__init__(
-            placeholder="Select player to bench",
-            min_values=1,
-            max_values=1,
+            placeholder=_build_step_prompt(step)[:150],
+            min_values=bench_count,
+            max_values=bench_count,
             options=options,
         )
 
-        self.comp_data = comp_data
-        self.candidates = candidates
-
     async def callback(self, interaction: discord.Interaction):
         try:
-            selected_id = self.values[0]
-            final_comp_data = _rebuild_comp_from_choice(self.comp_data, selected_id)
+            selected_ids = set(self.values)
+            updated_comp_data = _consume_next_bench_step(self.comp_data, selected_ids)
+            remaining_steps = updated_comp_data.get("bench_choice_steps", [])
 
-            await interaction.response.defer(ephemeral=True)
-
-            ok, message = await post_comp_message(
-                interaction.channel,
-                final_comp_data,
-            )
-
-            if not ok:
-                msg = await interaction.followup.send(
-                    message,
-                    ephemeral=True,
-                    wait=True,
-                )
-                asyncio.create_task(
-                    delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            if remaining_steps:
+                next_step = remaining_steps[0]
+                await interaction.response.edit_message(
+                    content=_build_step_prompt(next_step),
+                    view=CompBenchView(updated_comp_data),
                 )
                 return
 
-            msg = await interaction.followup.send(
-                "Comp posted.",
-                ephemeral=True,
-                wait=True,
+            ok, message = await post_comp_message(
+                interaction.channel,
+                updated_comp_data,
             )
 
-            asyncio.create_task(
-                delete_followup_message_after(msg, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            if not ok:
+                await interaction.response.edit_message(
+                    content=message,
+                    view=None,
+                )
+                asyncio.create_task(
+                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                )
+                return
+
+            await interaction.response.edit_message(
+                content="Comp posted.",
+                view=None,
             )
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            )
+
         except Exception as e:
-            msg = await interaction.followup.send(
-                f"Failed to post comp: {type(e).__name__}: {e}",
-                ephemeral=True,
-                wait=True,
+            await interaction.response.edit_message(
+                content=f"Failed to post comp: {type(e).__name__}: {e}",
+                view=None,
             )
             asyncio.create_task(
-                delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
 
 
 class CompBenchView(discord.ui.View):
-    def __init__(self, comp_data: dict, candidates: list[tuple[str, dict]]):
+    def __init__(self, comp_data: dict):
         super().__init__(timeout=120)
-        self.add_item(BenchSelect(comp_data, candidates))
+        steps = comp_data.get("bench_choice_steps", [])
+        if steps:
+            self.add_item(BenchSelect(comp_data, steps[0]))

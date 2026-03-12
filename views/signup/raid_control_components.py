@@ -4,6 +4,7 @@ from services.raid_control_service import get_players
 
 
 ACTION_VALUES = {
+    "sign": "Sign",
     "bench": "Bench",
     "late": "Late",
     "tentative": "Tentative",
@@ -56,7 +57,7 @@ class RaidControlPlayerSelect(discord.ui.Select):
             return
 
         self.view.selected_user_id = self.values[0]
-        await interaction.response.defer()
+        await self.view.try_apply_action(interaction)
 
 
 class RaidControlActionSelect(discord.ui.Select):
@@ -76,4 +77,4 @@ class RaidControlActionSelect(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         self.view.selected_action = self.values[0]
-        await interaction.response.defer()
+        await self.view.try_apply_action(interaction)

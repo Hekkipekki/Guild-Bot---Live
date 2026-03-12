@@ -83,108 +83,79 @@ class RaidControlSpecPlayerSelect(discord.ui.Select):
         selected_value = self.values[0]
 
         if selected_value == "__none__":
-            self.view.selected_user_id = None
-            self.view.selected_spec = None
-            self.view.rebuild_spec_select()
             await interaction.response.edit_message(
-                content="Change a player's spec for this raid only.",
-                view=self.view,
+                content="No players found.",
+                view=None,
+            )
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
-        self.view.selected_user_id = selected_value
-        self.view.selected_spec = None
-        self.view.rebuild_spec_select()
-
         await interaction.response.edit_message(
-            content="Change a player's spec for this raid only.",
-            view=self.view,
+            content="Select a new spec for this player:",
+            view=RaidControlSpecSelectView(self.view.raid_id, selected_value),
         )
 
 
 class RaidControlSpecSelect(discord.ui.Select):
-    def __init__(self, raid_id: str, user_id: str | None):
+    def __init__(self, raid_id: str, user_id: str):
         self.raid_id = raid_id
         self.user_id = user_id
 
         options = []
 
-        if user_id:
-            valid_specs = get_valid_specs_for_player(raid_id, user_id)
+        valid_specs = get_valid_specs_for_player(raid_id, user_id)
 
-            for item in valid_specs:
-                spec_name = item["spec"]
-                role_name = item["role"]
-                emoji = None
+        for item in valid_specs:
+            spec_name = item["spec"]
+            role_name = item["role"]
+            emoji = None
 
-                raw = config.SPEC_EMOJIS.get(spec_name)
-                if raw:
-                    try:
-                        emoji = discord.PartialEmoji.from_str(raw)
-                    except Exception:
-                        emoji = None
+            raw = config.SPEC_EMOJIS.get(spec_name)
+            if raw:
+                try:
+                    emoji = discord.PartialEmoji.from_str(raw)
+                except Exception:
+                    emoji = None
 
-                options.append(
-                    discord.SelectOption(
-                        label=spec_name[:100],
-                        value=spec_name,
-                        description=f"Role: {role_name}"[:100],
-                        emoji=emoji,
-                    )
+            options.append(
+                discord.SelectOption(
+                    label=spec_name[:100],
+                    value=spec_name,
+                    description=f"Role: {role_name}"[:100],
+                    emoji=emoji,
                 )
+            )
 
         if not options:
             options.append(
                 discord.SelectOption(
-                    label="Select a player first",
+                    label="No spec choices available",
                     value="__none__",
-                    description="Spec choices appear after player selection.",
+                    description="This player has no valid specs.",
                 )
             )
 
         super().__init__(
-            placeholder="Select spec...",
+            placeholder="Select new spec...",
             min_values=1,
             max_values=1,
             options=options,
-            row=1,
+            row=0,
         )
 
     async def callback(self, interaction: discord.Interaction):
         selected_value = self.values[0]
 
         if selected_value == "__none__":
-            self.view.selected_spec = None
-            await interaction.response.defer()
-            return
-
-        self.view.selected_spec = selected_value
-        await interaction.response.defer()
-
-
-class ApplySpecChangeButton(discord.ui.Button):
-    def __init__(self):
-        super().__init__(
-            label="Apply Spec",
-            style=discord.ButtonStyle.primary,
-            row=2,
-        )
-
-    async def callback(self, interaction: discord.Interaction):
-        view = self.view
-
-        if not view.selected_user_id:
-            await _send_spec_error(interaction, "Select a player first.")
-            return
-
-        if not view.selected_spec:
-            await _send_spec_error(interaction, "Select a spec first.")
+            await _send_spec_error(interaction, "No valid spec choices available.")
             return
 
         ok = change_player_spec(
-            view.raid_id,
-            view.selected_user_id,
-            view.selected_spec,
+            self.raid_id,
+            self.user_id,
+            selected_value,
         )
 
         if not ok:
@@ -195,14 +166,13 @@ class ApplySpecChangeButton(discord.ui.Button):
             return
 
         try:
-            refreshed = await refresh_signup_message_by_id(interaction.channel, int(view.raid_id))
+            refreshed = await refresh_signup_message_by_id(interaction.channel, int(self.raid_id))
             if not refreshed:
                 await _send_spec_error(
                     interaction,
                     "Player spec updated, but the raid signup no longer exists.",
                 )
                 return
-
         except Exception as e:
             await _send_spec_error(
                 interaction,
@@ -210,32 +180,27 @@ class ApplySpecChangeButton(discord.ui.Button):
             )
             return
 
-        await interaction.response.send_message(
-            f"Player spec changed to {view.selected_spec}.",
-            ephemeral=True,
+        from views.signup.raid_control_view import RaidControlView
+
+        await interaction.response.edit_message(
+            content=f"Player spec changed to **{selected_value}**.",
+            view=RaidControlView(self.raid_id),
         )
         asyncio.create_task(
             delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
         )
 
 
-class RaidControlSpecView(discord.ui.View):
+class RaidControlSpecPlayerView(discord.ui.View):
     def __init__(self, raid_id: str):
         super().__init__(timeout=120)
         self.raid_id = raid_id
-        self.selected_user_id = None
-        self.selected_spec = None
+        self.add_item(RaidControlSpecPlayerSelect(raid_id))
 
-        self.player_select = RaidControlSpecPlayerSelect(raid_id)
-        self.spec_select = RaidControlSpecSelect(raid_id, None)
 
-        self.add_item(self.player_select)
-        self.add_item(self.spec_select)
-        self.add_item(ApplySpecChangeButton())
-
-    def rebuild_spec_select(self):
-        if self.spec_select in self.children:
-            self.remove_item(self.spec_select)
-
-        self.spec_select = RaidControlSpecSelect(self.raid_id, self.selected_user_id)
-        self.add_item(self.spec_select)
+class RaidControlSpecSelectView(discord.ui.View):
+    def __init__(self, raid_id: str, user_id: str):
+        super().__init__(timeout=120)
+        self.raid_id = raid_id
+        self.user_id = user_id
+        self.add_item(RaidControlSpecSelect(raid_id, user_id))
