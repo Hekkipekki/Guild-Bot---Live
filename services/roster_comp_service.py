@@ -1,0 +1,251 @@
+from data.signup_store import load_signups, find_message_signup
+
+
+def _get_display_role(entry: dict) -> str:
+    role = entry.get("role", "")
+
+    if role in ("Melee", "Ranged"):
+        return "DPS"
+
+    return role
+
+
+def _sort_by_timestamp(players: list[tuple[str, dict]]) -> list[tuple[str, dict]]:
+    return sorted(players, key=lambda item: item[1].get("timestamp", 0))
+
+
+def _split_players(users: dict) -> tuple[list[tuple[str, dict]], list[tuple[str, dict]]]:
+    signed = []
+    benched = []
+
+    for user_id, entry in users.items():
+        status = entry.get("status")
+
+        if status == "sign":
+            signed.append((str(user_id), entry))
+        elif status == "bench":
+            benched.append((str(user_id), entry))
+
+    return _sort_by_timestamp(signed), _sort_by_timestamp(benched)
+
+
+def _group_signed_players(players: list[tuple[str, dict]]) -> dict[str, list[tuple[str, dict]]]:
+    grouped = {
+        "Tank": [],
+        "Healer": [],
+        "DPS": [],
+    }
+
+    for user_id, entry in players:
+        display_role = _get_display_role(entry)
+        if display_role in grouped:
+            grouped[display_role].append((user_id, entry))
+
+    return grouped
+
+
+def _build_comp_option(
+    grouped: dict[str, list[tuple[str, dict]]],
+    *,
+    healer_count: int,
+    dps_count: int,
+    label: str,
+) -> dict:
+    tanks = grouped["Tank"][:2]
+    healers = grouped["Healer"][:healer_count]
+    dps = grouped["DPS"][:dps_count]
+
+    selected = tanks + healers + dps
+
+    return {
+        "label": label,
+        "tanks": tanks,
+        "healers": healers,
+        "dps": dps,
+        "selected": selected,
+        "selected_ids": {user_id for user_id, _ in selected},
+        "count": len(selected),
+        "role_targets": {
+            "Tank": 2,
+            "Healer": healer_count,
+            "DPS": dps_count,
+        },
+    }
+
+
+def _build_groups(comp: dict) -> tuple[list[tuple[str, dict]], list[tuple[str, dict]]]:
+    group_1 = []
+    group_2 = []
+
+    group_1.extend(comp["tanks"])
+    group_1.extend(comp["healers"])
+
+    remaining_dps = list(comp["dps"])
+
+    while len(group_1) < 5 and remaining_dps:
+        group_1.append(remaining_dps.pop(0))
+
+    group_2.extend(remaining_dps)
+
+    return group_1, group_2
+
+
+def _get_bench_choice_candidates(
+    grouped: dict[str, list[tuple[str, dict]]],
+    role_targets: dict[str, int],
+) -> list[tuple[str, dict]]:
+    """
+    Return the full signed role pool for the contested role.
+
+    Examples:
+    - if signed DPS > target DPS, return all signed DPS
+    - if signed Healers > target Healers, return all signed Healers
+
+    Benched players are never included because this function only receives
+    grouped signed players.
+    """
+    contested_roles = []
+
+    for role_name in ("Healer", "DPS"):
+        signed_count = len(grouped[role_name])
+        target_count = role_targets.get(role_name, 0)
+
+        if signed_count > target_count:
+            contested_roles.append(role_name)
+
+    if not contested_roles:
+        return []
+
+    # In your use case, ambiguous 10-man comp decisions are typically between
+    # healer vs DPS count. If both somehow exceed, prefer the role whose target
+    # changed in the chosen setup.
+    contested_role = contested_roles[0]
+    return list(grouped[contested_role])
+
+
+def _build_comp_payload(
+    signup: dict,
+    raid_id: int | str,
+    signed_players: list[tuple[str, dict]],
+    existing_bench: list[tuple[str, dict]],
+    grouped_signed: dict[str, list[tuple[str, dict]]],
+    comp: dict,
+) -> dict:
+    overflow_signed = [
+        (user_id, entry)
+        for user_id, entry in signed_players
+        if user_id not in comp["selected_ids"]
+    ]
+
+    bench_players = existing_bench + overflow_signed
+    group_1, group_2 = _build_groups(comp)
+
+    return {
+        "raid_id": str(raid_id),
+        "title": signup.get("title", "Raid Comp"),
+        "description": signup.get("description", ""),
+        "leader": signup.get("leader", ""),
+        "start_ts": signup.get("start_ts"),
+        "group_1": group_1,
+        "group_2": group_2,
+        "bench_players": bench_players,
+        "selected_players": comp["selected"],
+        "signed_players": signed_players,
+        "mentions": [f"<@{user_id}>" for user_id, _ in comp["selected"]],
+        "comp_label": comp["label"],
+        "role_targets": comp["role_targets"],
+        "bench_choice_candidates": _get_bench_choice_candidates(
+            grouped_signed,
+            comp["role_targets"],
+        ),
+    }
+
+
+def analyze_roster_comp(raid_id: int | str) -> tuple[str, dict | None]:
+    """
+    Returns:
+    - ("ready", {"comp_data": ...}) when one comp should be posted directly
+    - ("ambiguous", {"option_226": ..., "option_235": ...}) when both are valid 10-man comps
+    - ("error", None) when raid not found
+    """
+    data = load_signups()
+    signup = find_message_signup(data, raid_id)
+
+    if not signup:
+        return "error", None
+
+    users = signup.get("users", {})
+    signed_players, existing_bench = _split_players(users)
+    grouped = _group_signed_players(signed_players)
+
+    option_226 = _build_comp_option(
+        grouped,
+        healer_count=2,
+        dps_count=6,
+        label="2/2/6",
+    )
+
+    option_235 = _build_comp_option(
+        grouped,
+        healer_count=3,
+        dps_count=5,
+        label="2/3/5",
+    )
+
+    if option_226["count"] > option_235["count"]:
+        return "ready", {
+            "comp_data": _build_comp_payload(
+                signup,
+                raid_id,
+                signed_players,
+                existing_bench,
+                grouped,
+                option_226,
+            )
+        }
+
+    if option_235["count"] > option_226["count"]:
+        return "ready", {
+            "comp_data": _build_comp_payload(
+                signup,
+                raid_id,
+                signed_players,
+                existing_bench,
+                grouped,
+                option_235,
+            )
+        }
+
+    both_full_ten = option_226["count"] == 10 and option_235["count"] == 10
+    setups_differ = option_226["label"] != option_235["label"]
+
+    if both_full_ten and setups_differ:
+        return "ambiguous", {
+            "option_226": _build_comp_payload(
+                signup,
+                raid_id,
+                signed_players,
+                existing_bench,
+                grouped,
+                option_226,
+            ),
+            "option_235": _build_comp_payload(
+                signup,
+                raid_id,
+                signed_players,
+                existing_bench,
+                grouped,
+                option_235,
+            ),
+        }
+
+    return "ready", {
+        "comp_data": _build_comp_payload(
+            signup,
+            raid_id,
+            signed_players,
+            existing_bench,
+            grouped,
+            option_226,
+        )
+    }

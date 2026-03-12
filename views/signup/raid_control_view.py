@@ -1,10 +1,15 @@
 import asyncio
 import discord
 
+from services.roster_comp_service import analyze_roster_comp
+from services.comp_message_service import post_comp_message
+from views.signup.comp_choice_view import CompChoiceView
+
 from services.raid_control_service import (
     set_player_status,
     remove_player_signup,
 )
+from services.comp_message_service import post_comp_message
 from services.signup_refresh_service import refresh_signup_message_by_id
 from views.signup.raid_control_components import (
     RaidControlPlayerSelect,
@@ -182,3 +187,74 @@ class RaidControlView(discord.ui.View):
         self.add_item(ApplyRaidControlButton())
         self.add_item(ChangeSpecRaidControlButton())
         self.add_item(RefreshRaidControlButton())
+        self.add_item(BuildCompButton())
+
+class BuildCompButton(discord.ui.Button):
+    def __init__(self):
+        super().__init__(
+            label="Build Comp",
+            style=discord.ButtonStyle.success,
+            row=3,
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        try:
+            view = self.view
+
+            state, payload = analyze_roster_comp(view.raid_id)
+
+            if state == "error" or not payload:
+                await _send_raid_control_error(
+                    interaction,
+                    "Could not build comp. The raid may no longer exist.",
+                )
+                return
+
+            if state == "ambiguous":
+                await interaction.response.send_message(
+                    "Two valid 10-man comps were found. Choose which one to post.",
+                    view=CompChoiceView(
+                        payload["option_226"],
+                        payload["option_235"],
+                    ),
+                    ephemeral=True,
+                )
+                asyncio.create_task(
+                    delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+                )
+                return
+
+            comp_data = payload["comp_data"]
+
+            await interaction.response.defer(ephemeral=True)
+
+            ok, message = await post_comp_message(
+                interaction.channel,
+                comp_data,
+            )
+
+            if not ok:
+                msg = await interaction.followup.send(
+                    message,
+                    ephemeral=True,
+                    wait=True,
+                )
+                asyncio.create_task(
+                    delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                )
+                return
+
+            msg = await interaction.followup.send(
+                "Comp message posted.",
+                ephemeral=True,
+                wait=True,
+            )
+            asyncio.create_task(
+                delete_followup_message_after(msg, RAID_CONTROL_AUTO_DELETE_SECONDS)
+            )
+
+        except Exception as e:
+            await _send_raid_control_error(
+                interaction,
+                f"Build Comp failed: {type(e).__name__}: {e}",
+            )

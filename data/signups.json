@@ -290,21 +290,133 @@
       "60": true
     }
   },
-  "1481619866543722649": {
-    "title": "HC Progression - Wednesday",
-    "description": "Continuation of HC Progress",
+  "1481637532687929386": {
+    "title": "HC Progression - Template Preview",
+    "description": "Visual preview with fake raid roster",
     "leader": "Hekkipekki / Rhegaran",
     "start_ts": 1773858600,
     "channel_id": 1480191818229350532,
     "users": {
-      "141881090913599488": {
-        "class": "Rogue",
-        "spec": "Assassination",
+      "demo_0": {
+        "display_name": "Totemlord",
+        "class": "Warrior",
+        "spec": "ProtectionWarrior",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1773320316.4757307
+      },
+      "demo_1": {
+        "display_name": "Thorgrim",
+        "class": "Monk",
+        "spec": "Brewmaster",
+        "role": "Tank",
+        "status": "sign",
+        "timestamp": 1773320317.4757307
+      },
+      "demo_2": {
+        "display_name": "Pyroblastz",
+        "class": "Priest",
+        "spec": "HolyPriest",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773320318.4757307
+      },
+      "demo_3": {
+        "display_name": "Shadowzap",
+        "class": "Druid",
+        "spec": "RestorationDruid",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773320319.4757307
+      },
+      "demo_4": {
+        "display_name": "Arrowqt",
+        "class": "Paladin",
+        "spec": "HolyPaladin",
+        "role": "Healer",
+        "status": "sign",
+        "timestamp": 1773320320.4757307
+      },
+      "demo_5": {
+        "display_name": "Leafhealz",
+        "class": "Warrior",
+        "spec": "Arms",
         "role": "Melee",
-        "timestamp": 1773316178.429598,
-        "name": "test",
+        "status": "sign",
+        "timestamp": 1773320321.4757307
+      },
+      "demo_6": {
+        "display_name": "Soulrot",
+        "class": "Warrior",
+        "spec": "Fury",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773320322.4757307
+      },
+      "demo_7": {
+        "display_name": "Windbonk",
+        "class": "Warlock",
+        "spec": "Affliction",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773320323.4757307
+      },
+      "demo_8": {
+        "display_name": "Glimmer",
+        "class": "Mage",
+        "spec": "Fire",
+        "role": "Ranged",
+        "status": "sign",
+        "timestamp": 1773320324.4757307
+      },
+      "demo_9": {
+        "display_name": "Bonkadin",
+        "class": "Druid",
+        "spec": "Feral",
+        "role": "Melee",
+        "status": "sign",
+        "timestamp": 1773320325.4757307
+      },
+      "demo_10": {
+        "display_name": "Hexella",
+        "class": "Warrior",
+        "spec": "Fury",
+        "role": "Melee",
+        "status": "late",
+        "timestamp": 1773320326.4757307
+      },
+      "demo_11": {
+        "display_name": "Moonbeef",
+        "class": "Druid",
+        "spec": "Guardian",
+        "role": "Tank",
+        "status": "tentative",
+        "timestamp": 1773320327.4757307
+      },
+      "demo_12": {
+        "display_name": "Clawbert",
+        "class": "Paladin",
+        "spec": "HolyPaladin",
+        "role": "Healer",
+        "status": "absence",
+        "timestamp": 1773320328.4757307
+      },
+      "demo_13": {
+        "display_name": "Holytoast",
+        "class": "Rogue",
+        "spec": "Combat",
+        "role": "Melee",
+        "status": "bench",
+        "timestamp": 1773320329.4757307
+      },
+      "141881090913599488": {
+        "class": "Druid",
+        "spec": "Balance",
+        "role": "Ranged",
+        "timestamp": 1773320342.1677575,
+        "name": "Brummelibrum",
         "note": "",
-        "status": "absence"
+        "status": "sign"
       }
     },
     "expected_players": [
