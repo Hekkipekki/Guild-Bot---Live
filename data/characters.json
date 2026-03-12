@@ -1,10 +1,10 @@
 {
     "141881090913599488": [
         {
-            "name": "Brummelibrum",
+            "name": "tetete",
             "class": "Druid",
-            "spec": "Balance",
-            "role": "Ranged"
+            "spec": "Guardian",
+            "role": "Tank"
         },
         {
             "name": "test123",
@@ -83,6 +83,14 @@
             "class": "Death Knight",
             "spec": "Blood",
             "role": "Tank"
+        }
+    ],
+    "733947209845833730": [
+        {
+            "name": "Balance Druid",
+            "class": "Druid",
+            "spec": "Balance",
+            "role": "Ranged"
         }
     ]
 }

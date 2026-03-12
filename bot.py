@@ -21,8 +21,9 @@ _commands_synced = False
 EXTENSIONS = [
     "cogs.wa_commands",
     "cogs.signup",
-    "cogs.raid_leader",
     "cogs.reminders",
+    "cogs.guild_admin",
+    "cogs.raid_builder",
 ]
 
 

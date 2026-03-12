@@ -26,7 +26,7 @@ def build_signup_options_embed(entry: dict) -> discord.Embed:
     )
     embed.add_field(name="Note", value=note or "-", inline=False)
     embed.set_footer(
-        text=f"This panel closes automatically after {AUTO_DELETE_SECONDS} seconds."
+        text=f"This panel closes automatically after {SIGNUP_OPTIONS_AUTO_DELETE_SECONDS} seconds."
     )
 
     return embed

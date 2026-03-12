@@ -10,7 +10,7 @@ from utils.ui_timing import (
     CHARACTER_MENU_AUTO_DELETE_SECONDS,
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
 )
-from utils.discord_utils import delete_interaction_after, delete_message_after
+from utils.discord_utils import delete_interaction_after
 from views.signup.main.shared import parse_spec_emoji
 from views.signup.character.character_add_view import AddCharacterClassView
 from views.signup.character.character_manage_view import ManageCharactersView

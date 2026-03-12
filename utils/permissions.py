@@ -1,16 +1,13 @@
-import config
+from services.guild.guild_settings_service import get_raid_control_users
 
 
 def can_manage_raid_tools(user) -> bool:
-    """
-    Check if a user is allowed to use raid leader tools.
-    """
-
-    if user.id in getattr(config, "RAID_CONTROL_USER_IDS", []):
-        return True
-
-    # Optional: allow server administrators as fallback
     if getattr(user.guild_permissions, "administrator", False):
         return True
 
-    return False
+    guild = getattr(user, "guild", None)
+    if guild is None:
+        return False
+
+    allowed_ids = get_raid_control_users(guild.id)
+    return str(user.id) in allowed_ids

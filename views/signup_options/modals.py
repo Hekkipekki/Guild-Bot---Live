@@ -1,7 +1,7 @@
 import asyncio
 import discord
 
-from services.character.character_service import update_character_name, update_character_spec
+from services.character.character_service import update_character_name
 from services.signup.signup_service import (
     update_user_name,
     update_user_note,
@@ -13,7 +13,8 @@ from utils.ui_timing import (
     SIGNUP_OPTIONS_AUTO_DELETE_SECONDS,
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
 )
-from .helpers import get_signup_entry, delete_interaction_after
+from .helpers import get_signup_entry
+from utils.discord_utils import delete_interaction_after
 from .embeds import build_signup_options_embed
 
 

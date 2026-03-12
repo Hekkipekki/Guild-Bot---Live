@@ -1,8 +1,9 @@
-import config
+from services.guild.guild_settings_service import get_expected_players
 
 
 def build_signup_payload(
     *,
+    guild_id: int,
     title: str,
     description: str,
     leader: str,
@@ -16,11 +17,9 @@ def build_signup_payload(
         "leader": leader.strip(),
         "start_ts": start_ts,
         "channel_id": channel_id,
+        "guild_id": guild_id,
         "users": dict(users) if users else {},
-        "expected_players": [
-            str(player_id)
-            for player_id in getattr(config, "DEFAULT_EXPECTED_PLAYERS", [])
-        ],
+        "expected_players": get_expected_players(guild_id),
         "missing_signup_reminders_sent": {
             "2880": False,
             "1440": False,

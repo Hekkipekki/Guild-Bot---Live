@@ -6,7 +6,8 @@ from services.signup.signup_service import update_user_spec
 from services.signup.signup_ui_service import (
     refresh_and_show_signup_options_from_channel,
 )
-from .helpers import get_signup_entry, parse_spec_emoji
+from .helpers import get_signup_entry
+from utils.emoji_helpers import parse_spec_emoji
 
 
 class EditSpecSelect(discord.ui.Select):

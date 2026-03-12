@@ -47,3 +47,27 @@ async def send_ephemeral_error(
 
         if delete_after:
             asyncio.create_task(delete_interaction_after(interaction, delete_after))
+
+async def send_ephemeral_success(
+    interaction: discord.Interaction,
+    message: str,
+    delete_after: int | None = None,
+):
+    if interaction.response.is_done():
+        msg = await interaction.followup.send(
+            message,
+            ephemeral=True,
+            wait=True,
+        )
+
+        if delete_after:
+            asyncio.create_task(delete_message_after(msg, delete_after))
+
+    else:
+        await interaction.response.send_message(
+            message,
+            ephemeral=True,
+        )
+
+        if delete_after:
+            asyncio.create_task(delete_interaction_after(interaction, delete_after))
