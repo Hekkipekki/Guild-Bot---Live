@@ -39,7 +39,7 @@
       "1440": true
     },
     "signed_player_reminders_sent": {
-      "60": false
+      "60": true
     }
   },
   "1481304595610468392": {
@@ -287,7 +287,7 @@
       "1440": false
     },
     "signed_player_reminders_sent": {
-      "60": false
+      "60": true
     }
   },
   "1481339773783113861": {

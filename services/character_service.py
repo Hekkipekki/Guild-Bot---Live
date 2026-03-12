@@ -8,11 +8,11 @@ from data.character_store import (
 )
 
 
-def get_user_characters(user_id: int):
+def get_user_characters(user_id: int) -> list[dict]:
     return store_get_user_characters(user_id)
 
 
-def get_character_by_class(user_id: int, class_name: str):
+def get_character_by_class(user_id: int, class_name: str) -> dict | None:
     return store_get_character_by_class(user_id, class_name)
 
 

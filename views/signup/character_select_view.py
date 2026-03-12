@@ -117,7 +117,7 @@ class CharacterSelect(discord.ui.Select):
 
         char = self.filtered_characters[int(value)]
 
-        set_user_spec(
+        ok = set_user_spec(
             raid_id=self.parent_message_id,
             user_id=str(interaction.user.id),
             selected_class=char["class"],
@@ -126,6 +126,16 @@ class CharacterSelect(discord.ui.Select):
             character_name=char["name"],
             auto_sign=True,
         )
+
+        if not ok:
+            await interaction.response.edit_message(
+                content="⚠ Raid signup no longer exists.",
+                view=None,
+            )
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
+            return
 
         await refresh_and_show_signup_options_from_channel(
             interaction,

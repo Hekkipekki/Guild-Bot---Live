@@ -1,4 +1,3 @@
-import asyncio
 import discord
 import config
 
@@ -7,7 +6,7 @@ from services.signup_service import update_user_spec
 from services.signup_ui_service import (
     refresh_and_show_signup_options_from_channel,
 )
-from .helpers import get_signup_entry, parse_spec_emoji, delete_ephemeral_after
+from .helpers import get_signup_entry, parse_spec_emoji
 
 
 class EditSpecSelect(discord.ui.Select):
@@ -52,9 +51,13 @@ class EditSpecSelect(discord.ui.Select):
         )
 
         if not ok:
-            await interaction.response.send_message("Could not update spec.", ephemeral=True)
+            await interaction.response.send_message(
+                "Could not update spec. The signup may no longer exist.",
+                ephemeral=True,
+            )
             return
 
+        # User-side spec edit intentionally updates the saved character profile too.
         update_character_spec(
             self.user_id,
             self.selected_class,
@@ -62,12 +65,17 @@ class EditSpecSelect(discord.ui.Select):
             role,
         )
 
-        await refresh_and_show_signup_options_from_channel(
+        shown = await refresh_and_show_signup_options_from_channel(
             interaction,
             self.raid_id,
             self.user_id,
-            delete_after=45,
         )
+
+        if not shown and not interaction.response.is_done():
+            await interaction.response.send_message(
+                "Spec updated, but failed to reopen signup options.",
+                ephemeral=True,
+            )
 
 
 class EditSpecView(discord.ui.View):

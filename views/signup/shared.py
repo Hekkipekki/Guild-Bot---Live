@@ -2,7 +2,10 @@ import asyncio
 import discord
 
 from utils.emoji_helpers import parse_spec_emoji, parse_class_emoji
-from utils.ui_timing import CHARACTER_MENU_AUTO_DELETE_SECONDS
+from utils.ui_timing import (
+    CHARACTER_MENU_AUTO_DELETE_SECONDS,
+    ERROR_MESSAGE_AUTO_DELETE_SECONDS,
+)
 from views.signup_options import delete_ephemeral_after
 
 
@@ -20,14 +23,24 @@ class BackToCharacterMenuButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         from views.signup.character_select_view import CharacterView
 
-        await interaction.response.edit_message(
-            content="Select your saved character:",
-            view=CharacterView(
-                self.user_id,
-                self.parent_message_id,
-                filter_class=self.filter_class,
-            ),
-        )
-        asyncio.create_task(
-            delete_ephemeral_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
-        )
+        try:
+            await interaction.response.edit_message(
+                content="Select your saved character:",
+                view=CharacterView(
+                    self.user_id,
+                    self.parent_message_id,
+                    filter_class=self.filter_class,
+                ),
+            )
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+            )
+        except Exception:
+            if not interaction.response.is_done():
+                await interaction.response.send_message(
+                    "⚠ Could not reopen character menu.",
+                    ephemeral=True,
+                )
+                asyncio.create_task(
+                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                )

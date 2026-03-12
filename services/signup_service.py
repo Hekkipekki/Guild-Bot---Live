@@ -1,19 +1,26 @@
 import time
 
-from data.signup_store import load_signups, save_signups, get_message_signup
+from data.signup_store import load_signups, save_signups, find_message_signup
 
 
 def get_signup_user(raid_id: int, user_id: str) -> dict | None:
     data = load_signups()
-    signup = get_message_signup(data, raid_id)
+    signup = find_message_signup(data, raid_id)
+
+    if not signup:
+        return None
+
     return signup.get("users", {}).get(user_id)
 
 
 def set_user_status(raid_id: int, user_id: str, status: str) -> tuple[bool, str | None]:
     data = load_signups()
-    signup = get_message_signup(data, raid_id)
-    users = signup["users"]
+    signup = find_message_signup(data, raid_id)
 
+    if not signup:
+        return False, "⚠ Raid signup not found."
+
+    users = signup.setdefault("users", {})
     users.setdefault(user_id, {})
 
     if users[user_id].get("spec") in ("", "Unknown", None):
@@ -28,23 +35,33 @@ def set_user_status(raid_id: int, user_id: str, status: str) -> tuple[bool, str 
     return True, None
 
 
-def remove_user_signup(raid_id: int, user_id: str) -> None:
+def remove_user_signup(raid_id: int, user_id: str) -> bool:
     data = load_signups()
-    signup = get_message_signup(data, raid_id)
-    users = signup["users"]
+    signup = find_message_signup(data, raid_id)
 
-    if user_id in users:
-        del users[user_id]
+    if not signup:
+        return False
 
+    users = signup.get("users", {})
+
+    if user_id not in users:
+        return False
+
+    del users[user_id]
     save_signups(data)
+    return True
 
 
-def set_user_class(raid_id: int, user_id: str, selected_class: str) -> None:
+def set_user_class(raid_id: int, user_id: str, selected_class: str) -> bool:
     data = load_signups()
-    signup = get_message_signup(data, raid_id)
-    users = signup["users"]
+    signup = find_message_signup(data, raid_id)
 
+    if not signup:
+        return False
+
+    users = signup.setdefault("users", {})
     users.setdefault(user_id, {})
+
     users[user_id]["class"] = selected_class
     users[user_id]["spec"] = ""
     users[user_id]["role"] = ""
@@ -53,6 +70,7 @@ def set_user_class(raid_id: int, user_id: str, selected_class: str) -> None:
     users[user_id].setdefault("note", "")
 
     save_signups(data)
+    return True
 
 
 def set_user_spec(
@@ -64,11 +82,14 @@ def set_user_spec(
     *,
     character_name: str | None = None,
     auto_sign: bool = False,
-) -> None:
+) -> bool:
     data = load_signups()
-    signup = get_message_signup(data, raid_id)
-    users = signup["users"]
+    signup = find_message_signup(data, raid_id)
 
+    if not signup:
+        return False
+
+    users = signup.setdefault("users", {})
     users.setdefault(user_id, {})
     entry = users[user_id]
 
@@ -90,12 +111,17 @@ def set_user_spec(
         entry.pop("status", None)
 
     save_signups(data)
+    return True
 
 
 def update_user_name(raid_id: int, user_id: str, new_name: str) -> bool:
     data = load_signups()
-    signup = get_message_signup(data, raid_id)
-    users = signup["users"]
+    signup = find_message_signup(data, raid_id)
+
+    if not signup:
+        return False
+
+    users = signup.get("users", {})
 
     if user_id not in users:
         return False
@@ -110,8 +136,12 @@ def update_user_name(raid_id: int, user_id: str, new_name: str) -> bool:
 
 def update_user_note(raid_id: int, user_id: str, note: str) -> bool:
     data = load_signups()
-    signup = get_message_signup(data, raid_id)
-    users = signup["users"]
+    signup = find_message_signup(data, raid_id)
+
+    if not signup:
+        return False
+
+    users = signup.get("users", {})
 
     if user_id not in users:
         return False
@@ -132,8 +162,12 @@ def update_user_spec(
     role: str,
 ) -> bool:
     data = load_signups()
-    signup = get_message_signup(data, raid_id)
-    users = signup["users"]
+    signup = find_message_signup(data, raid_id)
+
+    if not signup:
+        return False
+
+    users = signup.get("users", {})
 
     if user_id not in users:
         return False

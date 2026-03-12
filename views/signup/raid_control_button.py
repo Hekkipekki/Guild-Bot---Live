@@ -1,7 +1,13 @@
+import asyncio
 import discord
 
 from utils.permissions import can_manage_raid_tools
+from utils.ui_timing import (
+    ERROR_MESSAGE_AUTO_DELETE_SECONDS,
+    RAID_CONTROL_AUTO_DELETE_SECONDS,
+)
 from views.signup.raid_control_view import RaidControlView
+from views.signup_options.helpers import delete_ephemeral_after
 
 
 class RaidControlButton(discord.ui.Button):
@@ -20,6 +26,9 @@ class RaidControlButton(discord.ui.Button):
                 "You do not have access to raid controls.",
                 ephemeral=True,
             )
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
             return
 
         view = RaidControlView(self.raid_id)
@@ -28,4 +37,7 @@ class RaidControlButton(discord.ui.Button):
             "Raid control panel",
             view=view,
             ephemeral=True,
+        )
+        asyncio.create_task(
+            delete_ephemeral_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
         )

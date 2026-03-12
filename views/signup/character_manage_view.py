@@ -61,7 +61,23 @@ class RemoveCharacterSelect(discord.ui.Select):
             )
             return
 
-        if int(value) >= len(self.filtered_characters):
+        try:
+            selected_index = int(value)
+        except ValueError:
+            await interaction.response.edit_message(
+                content="⚠ Invalid character selection.",
+                view=ManageCharactersView(
+                    self.user_id,
+                    self.parent_message_id,
+                    filter_class=self.filter_class,
+                ),
+            )
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
+            return
+
+        if not (0 <= selected_index < len(self.filtered_characters)):
             await interaction.response.edit_message(
                 content="⚠ Character not found.",
                 view=ManageCharactersView(
@@ -75,7 +91,7 @@ class RemoveCharacterSelect(discord.ui.Select):
             )
             return
 
-        char_to_remove = self.filtered_characters[int(value)]
+        char_to_remove = self.filtered_characters[selected_index]
 
         all_characters = get_user_characters(self.user_id)
         real_index = next(
@@ -97,7 +113,20 @@ class RemoveCharacterSelect(discord.ui.Select):
             )
             return
 
-        remove_user_character(self.user_id, real_index)
+        removed = remove_user_character(self.user_id, real_index)
+        if not removed:
+            await interaction.response.edit_message(
+                content="⚠ Could not remove character.",
+                view=ManageCharactersView(
+                    self.user_id,
+                    self.parent_message_id,
+                    filter_class=self.filter_class,
+                ),
+            )
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )
+            return
 
         await interaction.response.edit_message(
             content=f"🗑 Removed **{char_to_remove['name']}**",

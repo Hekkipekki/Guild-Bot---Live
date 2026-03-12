@@ -9,41 +9,71 @@ from data.signup_store import load_signups
 from views.raidpack_views import RaidPackView
 from views.signup_views import SignupView
 
+
 intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix="!", intents=intents)
+
 _views_registered = False
 _commands_synced = False
+
+EXTENSIONS = [
+    "cogs.wa_commands",
+    "cogs.signup",
+    "cogs.raid_leader",
+    "cogs.reminders",
+]
+
+
+def _get_persistent_signup_ids() -> list[str]:
+    signups = load_signups()
+    return list(signups.keys())
+
+
+def _register_persistent_views() -> None:
+    global _views_registered
+
+    if _views_registered:
+        return
+
+    bot.add_view(RaidPackView())
+
+    for message_id in _get_persistent_signup_ids():
+        try:
+            bot.add_view(SignupView(str(message_id)))
+        except Exception as e:
+            print(f"Failed to register SignupView for message {message_id}: {e}")
+
+    _views_registered = True
+
+
+async def _sync_guild_commands() -> None:
+    global _commands_synced
+
+    if _commands_synced:
+        return
+
+    try:
+        guild_obj = discord.Object(id=config.TEST_GUILD_ID)
+        bot.tree.copy_global_to(guild=guild_obj)
+        synced = await bot.tree.sync(guild=guild_obj)
+        print(f"Synced {len(synced)} guild slash command(s) to {config.TEST_GUILD_ID}.")
+    except Exception as e:
+        print(f"Failed to sync slash commands: {e}")
+
+    _commands_synced = True
+
+
+async def _load_extensions() -> None:
+    for extension in EXTENSIONS:
+        await bot.load_extension(extension)
 
 
 @bot.event
 async def on_ready():
-    global _views_registered, _commands_synced
-
-    if not _views_registered:
-        bot.add_view(RaidPackView())
-
-        signups = load_signups()
-        for message_id in signups.keys():
-            try:
-                bot.add_view(SignupView(str(message_id)), message_id=int(message_id))
-            except Exception as e:
-                print(f"Failed to register SignupView for message {message_id}: {e}")
-
-        _views_registered = True
-
-    if not _commands_synced:
-        try:
-            guild_obj = discord.Object(id=config.TEST_GUILD_ID)
-            bot.tree.copy_global_to(guild=guild_obj)
-            synced = await bot.tree.sync(guild=guild_obj)
-            print(f"Synced {len(synced)} guild slash command(s) to {config.TEST_GUILD_ID}.")
-        except Exception as e:
-            print(f"Failed to sync slash commands: {e}")
-
-        _commands_synced = True
-
+    _register_persistent_views()
+    await _sync_guild_commands()
     print(f"Logged in as {bot.user}")
 
 
@@ -64,10 +94,7 @@ async def specicons(ctx):
 
 async def main():
     async with bot:
-        await bot.load_extension("cogs.wa_commands")
-        await bot.load_extension("cogs.signup")
-        await bot.load_extension("cogs.raid_leader")
-        await bot.load_extension("cogs.reminders")
+        await _load_extensions()
         await bot.start(config.TOKEN)
 
 

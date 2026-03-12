@@ -20,6 +20,29 @@ from utils.ui_timing import (
 )
 
 
+async def _send_raid_control_error(
+    interaction: discord.Interaction,
+    message: str,
+) -> None:
+    if interaction.response.is_done():
+        msg = await interaction.followup.send(
+            message,
+            ephemeral=True,
+            wait=True,
+        )
+        asyncio.create_task(
+            delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+        )
+    else:
+        await interaction.response.send_message(
+            message,
+            ephemeral=True,
+        )
+        asyncio.create_task(
+            delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+        )
+
+
 class ApplyRaidControlButton(discord.ui.Button):
     def __init__(self):
         super().__init__(
@@ -33,23 +56,11 @@ class ApplyRaidControlButton(discord.ui.Button):
             view = self.view
 
             if not view.selected_user_id:
-                await interaction.response.send_message(
-                    "Select a player first.",
-                    ephemeral=True,
-                )
-                asyncio.create_task(
-                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-                )
+                await _send_raid_control_error(interaction, "Select a player first.")
                 return
 
             if not view.selected_action:
-                await interaction.response.send_message(
-                    "Select an action first.",
-                    ephemeral=True,
-                )
-                asyncio.create_task(
-                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-                )
+                await _send_raid_control_error(interaction, "Select an action first.")
                 return
 
             if view.selected_action == "remove":
@@ -64,16 +75,19 @@ class ApplyRaidControlButton(discord.ui.Button):
                 action_text = f"set to {view.selected_action}"
 
             if not ok:
-                await interaction.response.send_message(
-                    "Could not update that player.",
-                    ephemeral=True,
-                )
-                asyncio.create_task(
-                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                await _send_raid_control_error(
+                    interaction,
+                    "Could not update that player. The raid or signup may no longer exist.",
                 )
                 return
 
-            await refresh_signup_message_by_id(interaction.channel, int(view.raid_id))
+            refreshed = await refresh_signup_message_by_id(interaction.channel, int(view.raid_id))
+            if not refreshed:
+                await _send_raid_control_error(
+                    interaction,
+                    "Player updated, but the raid signup no longer exists.",
+                )
+                return
 
             await interaction.response.send_message(
                 f"Player {action_text}.",
@@ -84,23 +98,10 @@ class ApplyRaidControlButton(discord.ui.Button):
             )
 
         except Exception as e:
-            if interaction.response.is_done():
-                msg = await interaction.followup.send(
-                    f"Raid control failed: {type(e).__name__}: {e}",
-                    ephemeral=True,
-                    wait=True,
-                )
-                asyncio.create_task(
-                    delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-                )
-            else:
-                await interaction.response.send_message(
-                    f"Raid control failed: {type(e).__name__}: {e}",
-                    ephemeral=True,
-                )
-                asyncio.create_task(
-                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-                )
+            await _send_raid_control_error(
+                interaction,
+                f"Raid control failed: {type(e).__name__}: {e}",
+            )
 
 
 class ChangeSpecRaidControlButton(discord.ui.Button):
@@ -128,23 +129,10 @@ class ChangeSpecRaidControlButton(discord.ui.Button):
             )
 
         except Exception as e:
-            if interaction.response.is_done():
-                msg = await interaction.followup.send(
-                    f"Change Spec failed: {type(e).__name__}: {e}",
-                    ephemeral=True,
-                    wait=True,
-                )
-                asyncio.create_task(
-                    delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-                )
-            else:
-                await interaction.response.send_message(
-                    f"Change Spec failed: {type(e).__name__}: {e}",
-                    ephemeral=True,
-                )
-                asyncio.create_task(
-                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-                )
+            await _send_raid_control_error(
+                interaction,
+                f"Change Spec failed: {type(e).__name__}: {e}",
+            )
 
 
 class RefreshRaidControlButton(discord.ui.Button):
@@ -158,7 +146,14 @@ class RefreshRaidControlButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         try:
             view = self.view
-            await refresh_signup_message_by_id(interaction.channel, int(view.raid_id))
+            refreshed = await refresh_signup_message_by_id(interaction.channel, int(view.raid_id))
+
+            if not refreshed:
+                await _send_raid_control_error(
+                    interaction,
+                    "⚠ Raid signup no longer exists.",
+                )
+                return
 
             await interaction.response.send_message(
                 "Raid refreshed.",
@@ -169,23 +164,10 @@ class RefreshRaidControlButton(discord.ui.Button):
             )
 
         except Exception as e:
-            if interaction.response.is_done():
-                msg = await interaction.followup.send(
-                    f"Failed to refresh raid: {type(e).__name__}: {e}",
-                    ephemeral=True,
-                    wait=True,
-                )
-                asyncio.create_task(
-                    delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-                )
-            else:
-                await interaction.response.send_message(
-                    f"Failed to refresh raid: {type(e).__name__}: {e}",
-                    ephemeral=True,
-                )
-                asyncio.create_task(
-                    delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-                )
+            await _send_raid_control_error(
+                interaction,
+                f"Failed to refresh raid: {type(e).__name__}: {e}",
+            )
 
 
 class RaidControlView(discord.ui.View):

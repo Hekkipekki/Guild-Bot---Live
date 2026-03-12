@@ -11,12 +11,12 @@ def build_signup_payload(
     users: dict | None = None,
 ) -> dict:
     return {
-        "title": title,
-        "description": description,
-        "leader": leader,
+        "title": title.strip(),
+        "description": description.strip(),
+        "leader": leader.strip(),
         "start_ts": start_ts,
         "channel_id": channel_id,
-        "users": users or {},
+        "users": dict(users) if users else {},
         "expected_players": [
             str(player_id)
             for player_id in getattr(config, "DEFAULT_EXPECTED_PLAYERS", [])

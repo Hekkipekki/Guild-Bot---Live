@@ -1,7 +1,7 @@
 import asyncio
 import discord
 
-from services.character_service import update_character_name
+from services.character_service import update_character_name, update_character_spec
 from services.signup_service import (
     update_user_name,
     update_user_note,
@@ -9,9 +9,22 @@ from services.signup_service import (
 from services.signup_ui_service import (
     refresh_main_signup_from_channel,
 )
-from utils.ui_timing import SIGNUP_OPTIONS_AUTO_DELETE_SECONDS
+from utils.ui_timing import (
+    SIGNUP_OPTIONS_AUTO_DELETE_SECONDS,
+    ERROR_MESSAGE_AUTO_DELETE_SECONDS,
+)
 from .helpers import get_signup_entry, delete_ephemeral_after
 from .embeds import build_signup_options_embed
+
+
+async def _show_modal_error(interaction: discord.Interaction, message: str) -> None:
+    if interaction.response.is_done():
+        return
+
+    await interaction.response.send_message(message, ephemeral=True)
+    asyncio.create_task(
+        delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+    )
 
 
 class EditNameModal(discord.ui.Modal, title="Edit Character Name"):
@@ -29,7 +42,7 @@ class EditNameModal(discord.ui.Modal, title="Edit Character Name"):
     async def on_submit(self, interaction: discord.Interaction):
         entry = get_signup_entry(self.raid_id, str(self.user_id))
         if not entry:
-            await interaction.response.send_message("Signup not found.", ephemeral=True)
+            await _show_modal_error(interaction, "Signup not found.")
             return
 
         new_name = str(self.new_name).strip()
@@ -42,17 +55,19 @@ class EditNameModal(discord.ui.Modal, title="Edit Character Name"):
         )
 
         if not ok:
-            await interaction.response.send_message("Signup not found.", ephemeral=True)
+            await _show_modal_error(interaction, "Signup not found.")
             return
 
         if class_name:
             update_character_name(self.user_id, class_name, new_name)
 
-        await refresh_main_signup_from_channel(interaction, self.raid_id)
+        refreshed = await refresh_main_signup_from_channel(interaction, self.raid_id)
+        if not refreshed:
+            return
 
         updated = get_signup_entry(self.raid_id, str(self.user_id))
         if not updated:
-            await interaction.response.send_message("Signup not found.", ephemeral=True)
+            await _show_modal_error(interaction, "Signup not found.")
             return
 
         from .options_view import SignupOptionsView
@@ -90,14 +105,16 @@ class EditNoteModal(discord.ui.Modal, title="Edit Note"):
         )
 
         if not ok:
-            await interaction.response.send_message("Signup not found.", ephemeral=True)
+            await _show_modal_error(interaction, "Signup not found.")
             return
 
-        await refresh_main_signup_from_channel(interaction, self.raid_id)
+        refreshed = await refresh_main_signup_from_channel(interaction, self.raid_id)
+        if not refreshed:
+            return
 
         updated = get_signup_entry(self.raid_id, str(self.user_id))
         if not updated:
-            await interaction.response.send_message("Signup not found.", ephemeral=True)
+            await _show_modal_error(interaction, "Signup not found.")
             return
 
         from .options_view import SignupOptionsView

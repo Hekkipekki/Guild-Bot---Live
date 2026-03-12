@@ -17,50 +17,55 @@ from utils.ui_timing import (
 )
 
 
+async def _send_error_response(
+    interaction: discord.Interaction,
+    message: str,
+) -> None:
+    if interaction.response.is_done():
+        msg = await interaction.followup.send(
+            message,
+            ephemeral=True,
+            wait=True,
+        )
+        asyncio.create_task(
+            delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+        )
+    else:
+        await interaction.response.send_message(
+            message,
+            ephemeral=True,
+        )
+        asyncio.create_task(
+            delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+        )
+
+
 async def refresh_main_signup_from_interaction(
     interaction: discord.Interaction,
     raid_id: int,
 ) -> bool:
     try:
-        await refresh_signup_message(interaction, raid_id)
+        ok = await refresh_signup_message(interaction, raid_id)
+        if not ok:
+            await _send_error_response(
+                interaction,
+                "⚠ Raid signup no longer exists.",
+            )
+            return False
         return True
+
     except discord.NotFound:
-        if interaction.response.is_done():
-            msg = await interaction.followup.send(
-                "⚠ Could not find the signup message.",
-                ephemeral=True,
-                wait=True,
-            )
-            asyncio.create_task(
-                delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-            )
-        else:
-            await interaction.response.send_message(
-                "⚠ Could not find the signup message.",
-                ephemeral=True,
-            )
-            asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-            )
+        await _send_error_response(
+            interaction,
+            "⚠ Could not find the signup message.",
+        )
         return False
+
     except Exception as e:
-        if interaction.response.is_done():
-            msg = await interaction.followup.send(
-                f"⚠ Could not refresh signup message: {e}",
-                ephemeral=True,
-                wait=True,
-            )
-            asyncio.create_task(
-                delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-            )
-        else:
-            await interaction.response.send_message(
-                f"⚠ Could not refresh signup message: {e}",
-                ephemeral=True,
-            )
-            asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-            )
+        await _send_error_response(
+            interaction,
+            f"⚠ Could not refresh signup message: {e}",
+        )
         return False
 
 
@@ -69,24 +74,26 @@ async def refresh_main_signup_from_channel(
     raid_id: int,
 ) -> bool:
     try:
-        await refresh_signup_message_by_id(interaction.channel, raid_id)
+        ok = await refresh_signup_message_by_id(interaction.channel, raid_id)
+        if not ok:
+            await _send_error_response(
+                interaction,
+                "⚠ Raid signup no longer exists.",
+            )
+            return False
         return True
+
     except discord.NotFound:
-        await interaction.response.send_message(
+        await _send_error_response(
+            interaction,
             "⚠ Could not find the signup message.",
-            ephemeral=True,
-        )
-        asyncio.create_task(
-            delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
         )
         return False
+
     except Exception as e:
-        await interaction.response.send_message(
+        await _send_error_response(
+            interaction,
             f"⚠ Could not refresh signup message: {e}",
-            ephemeral=True,
-        )
-        asyncio.create_task(
-            delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
         )
         return False
 
@@ -102,23 +109,10 @@ async def show_signup_options_panel(
 
     entry = get_signup_entry(raid_id, str(user_id))
     if not entry:
-        if interaction.response.is_done():
-            msg = await interaction.followup.send(
-                "⚠ Could not load signup options.",
-                ephemeral=True,
-                wait=True,
-            )
-            asyncio.create_task(
-                delete_followup_message_after(msg, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-            )
-        else:
-            await interaction.response.send_message(
-                "⚠ Could not load signup options.",
-                ephemeral=True,
-            )
-            asyncio.create_task(
-                delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
-            )
+        await _send_error_response(
+            interaction,
+            "⚠ Could not load signup options.",
+        )
         return False
 
     if interaction.response.is_done():

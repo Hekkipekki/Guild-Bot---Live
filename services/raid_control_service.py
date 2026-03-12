@@ -1,6 +1,6 @@
 import config
 
-from data.signup_store import load_signups, save_signups
+from data.signup_store import load_signups, save_signups, find_message_signup
 
 
 VALID_STATUSES = {"sign", "late", "bench", "tentative", "absence"}
@@ -8,12 +8,11 @@ VALID_STATUSES = {"sign", "late", "bench", "tentative", "absence"}
 
 def get_signup_data(raid_id: str) -> dict | None:
     data = load_signups()
-    return data.get(str(raid_id))
+    return find_message_signup(data, raid_id)
 
 
 def get_players(raid_id: str) -> list[dict]:
     signup = get_signup_data(raid_id)
-
     if not signup:
         return []
 
@@ -23,7 +22,7 @@ def get_players(raid_id: str) -> list[dict]:
     for user_id, entry in users.items():
         players.append(
             {
-                "user_id": user_id,
+                "user_id": str(user_id),
                 "name": entry.get("name") or entry.get("display_name") or "Unknown",
                 "class": entry.get("class"),
                 "spec": entry.get("spec"),
@@ -38,7 +37,6 @@ def get_players(raid_id: str) -> list[dict]:
 
 def get_player_entry(raid_id: str, user_id: str) -> dict | None:
     signup = get_signup_data(raid_id)
-
     if not signup:
         return None
 
@@ -48,20 +46,24 @@ def get_player_entry(raid_id: str, user_id: str) -> dict | None:
 
 def get_player_class(raid_id: str, user_id: str) -> str | None:
     entry = get_player_entry(raid_id, user_id)
-
     if not entry:
         return None
 
-    return entry.get("class")
+    selected_class = entry.get("class")
+    if not selected_class:
+        return None
+
+    return selected_class
 
 
 def get_valid_specs_for_player(raid_id: str, user_id: str) -> list[dict]:
     selected_class = get_player_class(raid_id, user_id)
-
     if not selected_class:
         return []
 
     spec_map = config.CLASS_SPECS.get(selected_class, {})
+    if not spec_map:
+        return []
 
     return [
         {
@@ -77,8 +79,7 @@ def set_player_status(raid_id: str, user_id: str, new_status: str) -> bool:
         return False
 
     data = load_signups()
-    raid = data.get(str(raid_id))
-
+    raid = find_message_signup(data, raid_id)
     if not raid:
         return False
 
@@ -95,8 +96,7 @@ def set_player_status(raid_id: str, user_id: str, new_status: str) -> bool:
 
 def remove_player_signup(raid_id: str, user_id: str) -> bool:
     data = load_signups()
-    raid = data.get(str(raid_id))
-
+    raid = find_message_signup(data, raid_id)
     if not raid:
         return False
 
@@ -118,8 +118,7 @@ def change_player_spec(raid_id: str, user_id: str, new_spec: str) -> bool:
     This does NOT update the saved character database.
     """
     data = load_signups()
-    raid = data.get(str(raid_id))
-
+    raid = find_message_signup(data, raid_id)
     if not raid:
         return False
 
@@ -135,6 +134,9 @@ def change_player_spec(raid_id: str, user_id: str, new_spec: str) -> bool:
         return False
 
     spec_map = config.CLASS_SPECS.get(selected_class, {})
+    if not spec_map:
+        return False
+
     if new_spec not in spec_map:
         return False
 

@@ -81,10 +81,21 @@ class RemoveSignupButton(discord.ui.Button):
         self.user_id = user_id
 
     async def callback(self, interaction: discord.Interaction):
-        remove_user_signup(
+        removed = remove_user_signup(
             raid_id=self.raid_id,
             user_id=str(self.user_id),
         )
+
+        if not removed:
+            await interaction.response.edit_message(
+                content="⚠ Signup not found or already removed.",
+                embed=None,
+                view=None,
+            )
+            asyncio.create_task(
+                delete_ephemeral_after(interaction, SHORT_CONFIRMATION_DELETE_SECONDS)
+            )
+            return
 
         try:
             await refresh_signup_message_by_id(interaction.channel, self.raid_id)

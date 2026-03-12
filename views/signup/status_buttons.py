@@ -37,11 +37,24 @@ class SignupStatusButton(discord.ui.Button):
         )
 
         if not ok:
-            await interaction.response.send_message(error_message, ephemeral=True)
+            await interaction.response.send_message(
+                error_message or "⚠ Could not update signup status.",
+                ephemeral=True,
+            )
             asyncio.create_task(
                 delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
             )
             return
 
         await interaction.response.defer()
-        await refresh_signup_message(interaction, int(self.raid_id))
+
+        refreshed = await refresh_signup_message(interaction, int(self.raid_id))
+        if not refreshed:
+            msg = await interaction.followup.send(
+                "⚠ Status updated, but the raid signup could not be refreshed.",
+                ephemeral=True,
+                wait=True,
+            )
+            asyncio.create_task(
+                msg.delete(delay=ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+            )

@@ -55,7 +55,7 @@ class ClassDropdown(discord.ui.Select):
                     break
 
             if saved_char:
-                set_user_spec(
+                ok = set_user_spec(
                     raid_id=int(self.raid_id),
                     user_id=str(interaction.user.id),
                     selected_class=saved_char["class"],
@@ -64,6 +64,16 @@ class ClassDropdown(discord.ui.Select):
                     character_name=saved_char["name"],
                     auto_sign=True,
                 )
+
+                if not ok:
+                    await interaction.response.send_message(
+                        "⚠ Raid signup no longer exists.",
+                        ephemeral=True,
+                    )
+                    asyncio.create_task(
+                        delete_ephemeral_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                    )
+                    return
 
                 await interaction.response.defer()
 
