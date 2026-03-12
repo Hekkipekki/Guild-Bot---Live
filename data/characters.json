@@ -23,6 +23,12 @@
             "class": "Warlock",
             "spec": "Affliction",
             "role": "Ranged"
+        },
+        {
+            "name": "test",
+            "class": "Rogue",
+            "spec": "Assassination",
+            "role": "Melee"
         }
     ],
     "248796420880990208": [
