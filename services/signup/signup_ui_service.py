@@ -112,10 +112,18 @@ async def show_signup_options_panel(
         )
         return False
 
+    guild = interaction.guild
+    if guild is None:
+        await _send_error_response(
+            interaction,
+            "⚠ This action can only be used inside a server.",
+        )
+        return False
+
     if interaction.response.is_done():
         msg = await interaction.followup.send(
             embed=build_signup_options_embed(entry),
-            view=SignupOptionsView(raid_id, user_id),
+            view=SignupOptionsView(guild.id, raid_id, user_id),
             ephemeral=True,
             wait=True,
         )
@@ -124,7 +132,7 @@ async def show_signup_options_panel(
         await interaction.response.edit_message(
             content=None,
             embed=build_signup_options_embed(entry),
-            view=SignupOptionsView(raid_id, user_id),
+            view=SignupOptionsView(guild.id, raid_id, user_id),
         )
         asyncio.create_task(delete_interaction_after(interaction, delete_after))
 
@@ -138,8 +146,8 @@ async def refresh_and_show_signup_options_from_interaction(
     *,
     delete_after: int = SIGNUP_OPTIONS_AUTO_DELETE_SECONDS,
 ) -> bool:
-    ok = await refresh_main_signup_from_interaction(interaction, raid_id)
-    if not ok:
+    refreshed = await refresh_main_signup_from_interaction(interaction, raid_id)
+    if not refreshed:
         return False
 
     return await show_signup_options_panel(
@@ -157,8 +165,8 @@ async def refresh_and_show_signup_options_from_channel(
     *,
     delete_after: int = SIGNUP_OPTIONS_AUTO_DELETE_SECONDS,
 ) -> bool:
-    ok = await refresh_main_signup_from_channel(interaction, raid_id)
-    if not ok:
+    refreshed = await refresh_main_signup_from_channel(interaction, raid_id)
+    if not refreshed:
         return False
 
     return await show_signup_options_panel(

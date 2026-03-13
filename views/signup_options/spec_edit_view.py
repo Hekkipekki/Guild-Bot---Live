@@ -11,7 +11,8 @@ from utils.emoji_helpers import parse_spec_emoji
 
 
 class EditSpecSelect(discord.ui.Select):
-    def __init__(self, raid_id: int, user_id: int, selected_class: str):
+    def __init__(self, guild_id: int, raid_id: int, user_id: int, selected_class: str):
+        self.guild_id = guild_id
         self.raid_id = raid_id
         self.user_id = user_id
         self.selected_class = selected_class
@@ -58,8 +59,8 @@ class EditSpecSelect(discord.ui.Select):
             )
             return
 
-        # User-side spec edit intentionally updates the saved character profile too.
         update_character_spec(
+            self.guild_id,
             self.user_id,
             self.selected_class,
             selected_spec,
@@ -80,6 +81,6 @@ class EditSpecSelect(discord.ui.Select):
 
 
 class EditSpecView(discord.ui.View):
-    def __init__(self, raid_id: int, user_id: int, selected_class: str):
+    def __init__(self, guild_id: int, raid_id: int, user_id: int, selected_class: str):
         super().__init__(timeout=60)
-        self.add_item(EditSpecSelect(raid_id, user_id, selected_class))
+        self.add_item(EditSpecSelect(guild_id, raid_id, user_id, selected_class))

@@ -35,8 +35,9 @@ class EditNameModal(discord.ui.Modal, title="Edit Character Name"):
         max_length=32,
     )
 
-    def __init__(self, raid_id: int, user_id: int):
+    def __init__(self, guild_id: int, raid_id: int, user_id: int):
         super().__init__()
+        self.guild_id = guild_id
         self.raid_id = raid_id
         self.user_id = user_id
 
@@ -60,7 +61,12 @@ class EditNameModal(discord.ui.Modal, title="Edit Character Name"):
             return
 
         if class_name:
-            update_character_name(self.user_id, class_name, new_name)
+            update_character_name(
+                self.guild_id,
+                self.user_id,
+                class_name,
+                new_name,
+            )
 
         refreshed = await refresh_main_signup_from_channel(interaction, self.raid_id)
         if not refreshed:
@@ -76,7 +82,7 @@ class EditNameModal(discord.ui.Modal, title="Edit Character Name"):
         await interaction.response.edit_message(
             content=None,
             embed=build_signup_options_embed(updated),
-            view=SignupOptionsView(self.raid_id, self.user_id),
+            view=SignupOptionsView(self.guild_id, self.raid_id, self.user_id),
         )
 
         asyncio.create_task(
@@ -93,8 +99,9 @@ class EditNoteModal(discord.ui.Modal, title="Edit Note"):
         max_length=200,
     )
 
-    def __init__(self, raid_id: int, user_id: int):
+    def __init__(self, guild_id: int, raid_id: int, user_id: int):
         super().__init__()
+        self.guild_id = guild_id
         self.raid_id = raid_id
         self.user_id = user_id
 
@@ -123,7 +130,7 @@ class EditNoteModal(discord.ui.Modal, title="Edit Note"):
         await interaction.response.edit_message(
             content=None,
             embed=build_signup_options_embed(updated),
-            view=SignupOptionsView(self.raid_id, self.user_id),
+            view=SignupOptionsView(self.guild_id, self.raid_id, self.user_id),
         )
 
         asyncio.create_task(

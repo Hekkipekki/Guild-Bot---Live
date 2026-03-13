@@ -1,10 +1,12 @@
 {
-    "141881090913599488": [
-        {
-            "name": "Balance Druid",
-            "class": "Druid",
-            "spec": "Balance",
-            "role": "Ranged"
-        }
-    ]
+    "1480200690654777466": {
+        "141881090913599488": [
+            {
+                "name": "Hekkipekki",
+                "class": "Druid",
+                "spec": "Guardian",
+                "role": "Tank"
+            }
+        ]
+    }
 }

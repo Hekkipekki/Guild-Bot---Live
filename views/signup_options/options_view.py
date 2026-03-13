@@ -13,26 +13,30 @@ from .spec_edit_view import EditSpecView
 
 
 class EditNameButton(discord.ui.Button):
-    def __init__(self, raid_id: int, user_id: int):
+    def __init__(self, guild_id: int, raid_id: int, user_id: int):
         super().__init__(
             label="Edit Name",
             style=discord.ButtonStyle.secondary,
             row=0,
         )
+        self.guild_id = guild_id
         self.raid_id = raid_id
         self.user_id = user_id
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_modal(EditNameModal(self.raid_id, self.user_id))
+        await interaction.response.send_modal(
+            EditNameModal(self.guild_id, self.raid_id, self.user_id)
+        )
 
 
 class EditSpecButton(discord.ui.Button):
-    def __init__(self, raid_id: int, user_id: int):
+    def __init__(self, guild_id: int, raid_id: int, user_id: int):
         super().__init__(
             label="Edit Spec",
             style=discord.ButtonStyle.secondary,
             row=0,
         )
+        self.guild_id = guild_id
         self.raid_id = raid_id
         self.user_id = user_id
 
@@ -53,31 +57,35 @@ class EditSpecButton(discord.ui.Button):
         await interaction.response.edit_message(
             content="Choose a new spec:",
             embed=None,
-            view=EditSpecView(self.raid_id, self.user_id, selected_class),
+            view=EditSpecView(self.guild_id, self.raid_id, self.user_id, selected_class),
         )
 
 
 class EditNoteButton(discord.ui.Button):
-    def __init__(self, raid_id: int, user_id: int):
+    def __init__(self, guild_id: int, raid_id: int, user_id: int):
         super().__init__(
             label="Edit Note",
             style=discord.ButtonStyle.secondary,
             row=0,
         )
+        self.guild_id = guild_id
         self.raid_id = raid_id
         self.user_id = user_id
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_modal(EditNoteModal(self.raid_id, self.user_id))
+        await interaction.response.send_modal(
+            EditNoteModal(self.guild_id, self.raid_id, self.user_id)
+        )
 
 
 class RemoveSignupButton(discord.ui.Button):
-    def __init__(self, raid_id: int, user_id: int):
+    def __init__(self, guild_id: int, raid_id: int, user_id: int):
         super().__init__(
             label="Remove Signup",
             style=discord.ButtonStyle.danger,
             row=1,
         )
+        self.guild_id = guild_id
         self.raid_id = raid_id
         self.user_id = user_id
 
@@ -115,9 +123,9 @@ class RemoveSignupButton(discord.ui.Button):
 
 
 class SignupOptionsView(discord.ui.View):
-    def __init__(self, raid_id: int, user_id: int):
+    def __init__(self, guild_id: int, raid_id: int, user_id: int):
         super().__init__(timeout=90)
-        self.add_item(EditNameButton(raid_id, user_id))
-        self.add_item(EditSpecButton(raid_id, user_id))
-        self.add_item(EditNoteButton(raid_id, user_id))
-        self.add_item(RemoveSignupButton(raid_id, user_id))
+        self.add_item(EditNameButton(guild_id, raid_id, user_id))
+        self.add_item(EditSpecButton(guild_id, raid_id, user_id))
+        self.add_item(EditNoteButton(guild_id, raid_id, user_id))
+        self.add_item(RemoveSignupButton(guild_id, raid_id, user_id))

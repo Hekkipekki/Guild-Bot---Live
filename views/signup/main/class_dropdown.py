@@ -41,9 +41,20 @@ class ClassDropdown(discord.ui.Select):
             selected_class = self.values[0]
 
             from services.character.character_service import get_user_characters
-            from views.character_select import AddCharacterSpecView
+            from views.signup.character.character_add_view import AddCharacterSpecView
 
-            characters = get_user_characters(interaction.user.id)
+            guild = interaction.guild
+            if guild is None:
+                await interaction.response.send_message(
+                    "⚠ This action can only be used inside a server.",
+                    ephemeral=True,
+                )
+                asyncio.create_task(
+                    delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                )
+                return
+
+            characters = get_user_characters(guild.id, interaction.user.id)
 
             saved_char = None
             for char in characters:
@@ -86,6 +97,7 @@ class ClassDropdown(discord.ui.Select):
                 f"Select your specialization for **{selected_class}**:",
                 ephemeral=True,
                 view=AddCharacterSpecView(
+                    guild_id=guild.id,
                     user_id=interaction.user.id,
                     parent_message_id=int(self.raid_id),
                     selected_class=selected_class,
