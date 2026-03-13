@@ -12,7 +12,7 @@ class RaidBuilderCommands(commands.Cog):
 
     @app_commands.command(name="raid", description="Open the raid creation panel.")
     async def raid(self, interaction: discord.Interaction):
-        if not can_manage_raid_tools(interaction.user):
+        if not can_manage_raid_tools(interaction):
             await interaction.response.send_message(
                 "⛔ You do not have access to create raids.",
                 ephemeral=True,

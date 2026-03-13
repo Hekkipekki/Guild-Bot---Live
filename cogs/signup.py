@@ -58,22 +58,9 @@ class SignupCommands(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def wedsignup(self, ctx: commands.Context):
-        signup = build_wednesday_signup(ctx.guild.id, ctx.channel.id)
-        await self._post_signup(ctx, signup)
-
-    @commands.command()
-    @commands.has_permissions(administrator=True)
     async def template(self, ctx: commands.Context):
         signup = build_template_signup(ctx.guild.id, ctx.channel.id)
         await self._post_signup(ctx, signup)
-
-    @commands.command()
-    @commands.has_permissions(administrator=True)
-    async def sunsignup(self, ctx: commands.Context):
-        signup = build_sunday_signup(ctx.guild.id, ctx.channel.id)
-        await self._post_signup(ctx, signup)
-
 
 async def setup(bot):
     await bot.add_cog(SignupCommands(bot))

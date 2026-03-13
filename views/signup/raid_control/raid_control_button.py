@@ -21,7 +21,7 @@ class RaidControlButton(discord.ui.Button):
         self.raid_id = raid_id
 
     async def callback(self, interaction: discord.Interaction):
-        if not can_manage_raid_tools(interaction.user):
+        if not can_manage_raid_tools(interaction):
             await interaction.response.send_message(
                 "You do not have access to raid controls.",
                 ephemeral=True,
