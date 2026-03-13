@@ -27,4 +27,6 @@ def build_signup_payload(
         "signed_player_reminders_sent": {
             "60": False,
         },
+        "missing_reminder_message_id": None,
+        "signed_reminder_message_id": None,
     }

@@ -145,3 +145,44 @@ def change_player_spec(raid_id: str, user_id: str, new_spec: str) -> bool:
 
     save_signups(data)
     return True
+    
+def toggle_recurring(raid_id: str) -> bool:
+    data = load_signups()
+    raid = find_message_signup(data, raid_id)
+
+    if not raid:
+        return False
+
+    current = raid.get("is_recurring", False)
+    raid["is_recurring"] = not current
+
+    save_signups(data)
+    return True
+
+
+def set_recurring_interval(raid_id: str, days: int) -> bool:
+    if days < 1:
+        return False
+
+    data = load_signups()
+    raid = find_message_signup(data, raid_id)
+
+    if not raid:
+        return False
+
+    raid["recurring_interval_days"] = days
+    raid["is_recurring"] = True
+
+    save_signups(data)
+    return True
+
+
+def get_recurring_settings(raid_id: str) -> dict:
+    raid = get_signup_data(raid_id)
+    if not raid:
+        return {}
+
+    return {
+        "enabled": raid.get("is_recurring", False),
+        "interval": raid.get("recurring_interval_days", None),
+    }

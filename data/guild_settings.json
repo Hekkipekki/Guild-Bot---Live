@@ -26,11 +26,13 @@
     "raid_control_user_ids": [
       "141881090913599488"
     ],
-    "expected_players": [],
+    "expected_players": [
+      "141881090913599488"
+    ],
     "default_leader": "",
     "default_description": "",
     "weakauras_channel_id": 1480200691938099263,
-    "weakauras_message_id": 1481831434640691371
+    "weakauras_message_id": 1482009295309635725
   },
   "1213272185402167316": {
     "guild_name": "RaJensen's server",
@@ -40,5 +42,25 @@
     "default_description": "",
     "weakauras_channel_id": null,
     "weakauras_message_id": null
+  },
+  "1175174589639303339": {
+    "guild_name": "ＥＮＳＩＤＩＧA",
+    "raid_control_user_ids": [],
+    "expected_players": [
+      "747110982136103035",
+      "733947209845833730",
+      "676385985008893982",
+      "219053149216964608",
+      "209344159943753729",
+      "196533947256012800",
+      "185836617112485889",
+      "182816419078078464",
+      "1472528485879775353",
+      "1189663148341461155"
+    ],
+    "default_leader": "",
+    "default_description": "",
+    "weakauras_channel_id": 1287535186052911167,
+    "weakauras_message_id": 1481965174905896992
   }
 }

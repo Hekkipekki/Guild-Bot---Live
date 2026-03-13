@@ -9,7 +9,7 @@ def _store_signup_for_message(message_id: int, signup: dict) -> None:
     save_signups(data)
 
 
-async def send_signup_message(ctx, signup: dict) -> bool:
+async def send_signup_message(ctx, signup: dict) -> int | None:
     try:
         embed = build_signup_embed(signup["title"], signup["description"], signup)
 
@@ -18,7 +18,7 @@ async def send_signup_message(ctx, signup: dict) -> bool:
         _store_signup_for_message(message.id, signup)
 
         await message.edit(view=SignupView(str(message.id)))
-        return True
+        return message.id
 
     except Exception:
-        return False
+        return None

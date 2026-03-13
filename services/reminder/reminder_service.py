@@ -125,8 +125,9 @@ def build_signed_player_reminder_message(
     mentions = " ".join(f"<@{user_id}>" for user_id in user_ids)
 
     return (
-        f"⏰ **Raid starts in {label}**\n"
+        f"⏰ **Raid starts <t:{start_ts}:R>**\n"
         f"{mentions}\n\n"
-        f"**{title}** starts <t:{start_ts}:R>\n"
-        f"Don't forget to check your bonus rolls, consumables, and your gear before raid starts — we don't want to lose any time."
+        f"**{title}** starts <t:{start_ts}:R> (<t:{start_ts}:t>)\n"
+        f"Don't forget to check your bonus rolls, consumables, and your gear before raid starts — "
+        f"we don't want to lose any time."
     )
