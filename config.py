@@ -1,13 +1,16 @@
 from pathlib import Path
 
+# ============================================================
+# Application config
+# ============================================================
+# NOTE:
+# - Runtime/app-level settings belong here
+# - Guild/server-specific settings belong in guild_settings.json
+#   and must be accessed through guild_settings_service.py
+
+# Dev-only: used for clearing old guild-scoped slash commands during testing.
+# Safe to keep, but should not be used as a source of guild settings.
 TEST_GUILD_ID = 1423706462773051542
-RAID_CONTROL_USER_IDS = [
-    141881090913599488,  # Hekkipekki
-    321966396864987137,  # Jensen
-    733947209845833730,  # Frika
-    248796420880990208,  # Turit
-]
-WEAKAURAS_CHANNEL_ID = 1423733790907306005
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -247,16 +250,3 @@ BUTTON_EMOJIS = {
     "submit_raid": "<:submit_raid:1481807823548579851>",
     "cancel_raid": "<:cancel_raid:1481807815550177380>",
 }
-
-DEFAULT_EXPECTED_PLAYERS = [
-    141881090913599488,  # Hekkipekki
-    771806222525267968,  # Shadé
-    251004817844076554,  # Magemil
-    260495039686246400,  # Raitila
-    321966396864987137,  # Rajensen
-    369109810311987200,  # Maverinkel
-    239532428073500672,  # Darkpreacha
-    344496860855009280,  # Lenef
-    710915046200574073,  # MistaProfessa
-    248796420880990208,  # Turit
-]

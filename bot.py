@@ -20,6 +20,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 _views_registered = False
 _commands_synced = False
 
+# Only active cogs should be listed here.
 EXTENSIONS = [
     "cogs.signup",
     "cogs.reminders",
@@ -51,7 +52,7 @@ def _register_persistent_views() -> None:
     _views_registered = True
 
 
-async def _sync_guild_commands() -> None:
+async def _sync_application_commands() -> None:
     global _commands_synced
 
     if _commands_synced:
@@ -63,7 +64,7 @@ async def _sync_guild_commands() -> None:
         if test_guild_id:
             guild_obj = discord.Object(id=test_guild_id)
 
-            # Clear old guild-only commands that may still exist from earlier testing
+            # Clear old guild-only test commands that may still exist
             bot.tree.clear_commands(guild=guild_obj)
             cleared = await bot.tree.sync(guild=guild_obj)
             print(
@@ -151,7 +152,7 @@ async def on_guild_join(guild: discord.Guild):
 @bot.event
 async def on_ready():
     _register_persistent_views()
-    await _sync_guild_commands()
+    await _sync_application_commands()
     await _sync_guild_names()
     await _ensure_weakauras_panels()
     print(f"Logged in as {bot.user}")
@@ -164,6 +165,9 @@ async def on_command_error(ctx, error):
 
 
 async def main():
+    if not config.TOKEN:
+        raise RuntimeError("Bot token not found. Define TOKEN in secrets_local.py")
+
     async with bot:
         await _load_extensions()
         await bot.start(config.TOKEN)

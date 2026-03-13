@@ -3,9 +3,22 @@ import time
 from data.signup_store import load_signups, save_signups, find_message_signup
 
 
+def _get_signup(data: dict, raid_id: int) -> dict | None:
+    return find_message_signup(data, raid_id)
+
+
+def _get_user_entry(signup: dict, user_id: str, create: bool = False) -> dict | None:
+    users = signup.setdefault("users", {})
+
+    if create:
+        users.setdefault(user_id, {})
+
+    return users.get(user_id)
+
+
 def get_signup_user(raid_id: int, user_id: str) -> dict | None:
     data = load_signups()
-    signup = find_message_signup(data, raid_id)
+    signup = _get_signup(data, raid_id)
 
     if not signup:
         return None
@@ -15,21 +28,20 @@ def get_signup_user(raid_id: int, user_id: str) -> dict | None:
 
 def set_user_status(raid_id: int, user_id: str, status: str) -> tuple[bool, str | None]:
     data = load_signups()
-    signup = find_message_signup(data, raid_id)
+    signup = _get_signup(data, raid_id)
 
     if not signup:
         return False, "⚠ Raid signup not found."
 
-    users = signup.setdefault("users", {})
-    users.setdefault(user_id, {})
+    entry = _get_user_entry(signup, user_id, create=True)
 
-    if users[user_id].get("spec") in ("", "Unknown", None):
+    if entry.get("spec") in ("", "Unknown", None):
         return False, "⚠ Please select your class first from the dropdown."
 
-    users[user_id]["status"] = status
-    users[user_id]["timestamp"] = time.time()
-    users[user_id].setdefault("note", "")
-    users[user_id].setdefault("name", "")
+    entry["status"] = status
+    entry["timestamp"] = time.time()
+    entry.setdefault("note", "")
+    entry.setdefault("name", "")
 
     save_signups(data)
     return True, None
@@ -37,7 +49,7 @@ def set_user_status(raid_id: int, user_id: str, status: str) -> tuple[bool, str 
 
 def remove_user_signup(raid_id: int, user_id: str) -> bool:
     data = load_signups()
-    signup = find_message_signup(data, raid_id)
+    signup = _get_signup(data, raid_id)
 
     if not signup:
         return False
@@ -54,20 +66,19 @@ def remove_user_signup(raid_id: int, user_id: str) -> bool:
 
 def set_user_class(raid_id: int, user_id: str, selected_class: str) -> bool:
     data = load_signups()
-    signup = find_message_signup(data, raid_id)
+    signup = _get_signup(data, raid_id)
 
     if not signup:
         return False
 
-    users = signup.setdefault("users", {})
-    users.setdefault(user_id, {})
+    entry = _get_user_entry(signup, user_id, create=True)
 
-    users[user_id]["class"] = selected_class
-    users[user_id]["spec"] = ""
-    users[user_id]["role"] = ""
-    users[user_id]["timestamp"] = time.time()
-    users[user_id].setdefault("name", "")
-    users[user_id].setdefault("note", "")
+    entry["class"] = selected_class
+    entry["spec"] = ""
+    entry["role"] = ""
+    entry["timestamp"] = time.time()
+    entry.setdefault("name", "")
+    entry.setdefault("note", "")
 
     save_signups(data)
     return True
@@ -84,14 +95,12 @@ def set_user_spec(
     auto_sign: bool = False,
 ) -> bool:
     data = load_signups()
-    signup = find_message_signup(data, raid_id)
+    signup = _get_signup(data, raid_id)
 
     if not signup:
         return False
 
-    users = signup.setdefault("users", {})
-    users.setdefault(user_id, {})
-    entry = users[user_id]
+    entry = _get_user_entry(signup, user_id, create=True)
 
     entry["class"] = selected_class
     entry["spec"] = selected_spec
@@ -116,19 +125,19 @@ def set_user_spec(
 
 def update_user_name(raid_id: int, user_id: str, new_name: str) -> bool:
     data = load_signups()
-    signup = find_message_signup(data, raid_id)
+    signup = _get_signup(data, raid_id)
 
     if not signup:
         return False
 
-    users = signup.get("users", {})
+    entry = _get_user_entry(signup, user_id, create=False)
 
-    if user_id not in users:
+    if not entry:
         return False
 
-    users[user_id]["name"] = new_name.strip()
-    users[user_id]["timestamp"] = time.time()
-    users[user_id].setdefault("note", "")
+    entry["name"] = new_name.strip()
+    entry["timestamp"] = time.time()
+    entry.setdefault("note", "")
 
     save_signups(data)
     return True
@@ -136,19 +145,19 @@ def update_user_name(raid_id: int, user_id: str, new_name: str) -> bool:
 
 def update_user_note(raid_id: int, user_id: str, note: str) -> bool:
     data = load_signups()
-    signup = find_message_signup(data, raid_id)
+    signup = _get_signup(data, raid_id)
 
     if not signup:
         return False
 
-    users = signup.get("users", {})
+    entry = _get_user_entry(signup, user_id, create=False)
 
-    if user_id not in users:
+    if not entry:
         return False
 
-    users[user_id]["note"] = note.strip()
-    users[user_id]["timestamp"] = time.time()
-    users[user_id].setdefault("name", "")
+    entry["note"] = note.strip()
+    entry["timestamp"] = time.time()
+    entry.setdefault("name", "")
 
     save_signups(data)
     return True
@@ -162,17 +171,16 @@ def update_user_spec(
     role: str,
 ) -> bool:
     data = load_signups()
-    signup = find_message_signup(data, raid_id)
+    signup = _get_signup(data, raid_id)
 
     if not signup:
         return False
 
-    users = signup.get("users", {})
+    entry = _get_user_entry(signup, user_id, create=False)
 
-    if user_id not in users:
+    if not entry:
         return False
 
-    entry = users[user_id]
     entry["class"] = selected_class
     entry["spec"] = selected_spec
     entry["role"] = role

@@ -1,5 +1,6 @@
 import time
 
+import discord
 from discord.ext import commands, tasks
 
 from data.signup_store import load_signups, save_signups
@@ -26,8 +27,15 @@ async def _delete_message_if_exists(channel, message_id: int | None) -> None:
     try:
         msg = await channel.fetch_message(int(message_id))
         await msg.delete()
-    except Exception:
-        pass
+
+    except discord.NotFound:
+        return
+
+    except discord.Forbidden:
+        return
+
+    except discord.HTTPException:
+        return
 
 
 async def _delete_old_raid_messages(bot, raid_id: str, signup: dict) -> None:
@@ -38,26 +46,23 @@ async def _delete_old_raid_messages(bot, raid_id: str, signup: dict) -> None:
         return
 
     guild = bot.get_guild(int(guild_id))
+
     if guild is None:
         try:
             guild = await bot.fetch_guild(int(guild_id))
-        except Exception:
+        except discord.HTTPException:
             return
 
     channel = guild.get_channel(int(channel_id))
+
     if channel is None:
         try:
             channel = await guild.fetch_channel(int(channel_id))
-        except Exception:
+        except discord.HTTPException:
             return
 
-    # Old signup message (raid_id is the signup message ID)
     await _delete_message_if_exists(channel, int(raid_id))
-
-    # Old comp message
     await _delete_message_if_exists(channel, signup.get("comp_message_id"))
-
-    # Old reminder messages
     await _delete_message_if_exists(channel, signup.get("missing_reminder_message_id"))
     await _delete_message_if_exists(channel, signup.get("signed_reminder_message_id"))
 
@@ -74,16 +79,23 @@ class RaidLifecycleCog(commands.Cog):
     async def lifecycle_loop(self):
         data = load_signups()
         now_ts = int(time.time())
+
         changed = False
         raid_ids_to_remove: list[str] = []
 
         for raid_id, signup in list(data.items()):
+
+            if signup.get("lifecycle_processed"):
+                continue
+
             if not is_signup_due_for_lifecycle(signup, now_ts):
                 continue
 
-            # Non-recurring: delete old Discord messages and remove from JSON
+            # Non-recurring raid cleanup
             if not is_recurring_signup(signup):
+
                 await _delete_old_raid_messages(self.bot, str(raid_id), signup)
+
                 raid_ids_to_remove.append(str(raid_id))
                 continue
 
@@ -94,33 +106,33 @@ class RaidLifecycleCog(commands.Cog):
                 continue
 
             guild = self.bot.get_guild(int(guild_id))
+
             if guild is None:
                 try:
                     guild = await self.bot.fetch_guild(int(guild_id))
-                except Exception:
+                except discord.HTTPException:
                     continue
 
             channel = guild.get_channel(int(channel_id))
+
             if channel is None:
                 try:
                     channel = await guild.fetch_channel(int(channel_id))
-                except Exception:
+                except discord.HTTPException:
                     continue
 
             next_signup = build_next_recurring_signup(signup, now_ts)
+
             new_message_id = await send_signup_message(_ChannelCtx(channel), next_signup)
 
             if not new_message_id:
                 continue
 
-            # Keep in-memory data in sync with the newly posted recurring signup
             data[str(new_message_id)] = next_signup
             changed = True
 
-            # Delete old Discord messages before removing old signup
             await _delete_old_raid_messages(self.bot, str(raid_id), signup)
 
-            # Remove the old recurring signup
             raid_ids_to_remove.append(str(raid_id))
 
         for raid_id in raid_ids_to_remove:

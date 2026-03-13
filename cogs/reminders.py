@@ -85,8 +85,9 @@ class ReminderCog(commands.Cog):
         for raid_id, signup in data.items():
             start_ts = signup.get("start_ts")
             channel_id = signup.get("channel_id")
+            guild_id = signup.get("guild_id")
 
-            if not start_ts or not channel_id:
+            if not start_ts or not channel_id or not guild_id:
                 continue
 
             seconds_left = start_ts - now
@@ -95,9 +96,17 @@ class ReminderCog(commands.Cog):
 
             minutes_left = seconds_left // 60
 
-            channel = await _fetch_channel(self.bot, int(channel_id))
-            if channel is None:
+            guild = self.bot.get_guild(int(guild_id))
+            if guild is None:
                 continue
+
+            channel = guild.get_channel(int(channel_id))
+
+            if channel is None:
+                try:
+                    channel = await guild.fetch_channel(int(channel_id))
+                except Exception:
+                    continue
 
             missing_reminders_sent = ensure_missing_signup_reminder_state(signup)
             signed_reminders_sent = ensure_signed_player_reminder_state(signup)

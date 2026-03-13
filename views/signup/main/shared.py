@@ -6,16 +6,23 @@ from utils.ui_timing import (
     CHARACTER_MENU_AUTO_DELETE_SECONDS,
     ERROR_MESSAGE_AUTO_DELETE_SECONDS,
 )
-from utils.discord_utils import delete_interaction_after, delete_message_after
+from utils.discord_utils import delete_interaction_after
 
 
 class BackToCharacterMenuButton(discord.ui.Button):
-    def __init__(self, user_id: int, parent_message_id: int, filter_class: str | None = None):
+    def __init__(
+        self,
+        guild_id: int,
+        user_id: int,
+        parent_message_id: int,
+        filter_class: str | None = None,
+    ):
         super().__init__(
             label="Back",
             style=discord.ButtonStyle.secondary,
             emoji="↩️",
         )
+        self.guild_id = guild_id
         self.user_id = user_id
         self.parent_message_id = parent_message_id
         self.filter_class = filter_class
@@ -27,13 +34,17 @@ class BackToCharacterMenuButton(discord.ui.Button):
             await interaction.response.edit_message(
                 content="Select your saved character:",
                 view=CharacterView(
+                    self.guild_id,
                     self.user_id,
                     self.parent_message_id,
                     filter_class=self.filter_class,
                 ),
             )
             asyncio.create_task(
-                delete_interaction_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+                delete_interaction_after(
+                    interaction,
+                    CHARACTER_MENU_AUTO_DELETE_SECONDS,
+                )
             )
         except Exception:
             if not interaction.response.is_done():
@@ -42,5 +53,8 @@ class BackToCharacterMenuButton(discord.ui.Button):
                     ephemeral=True,
                 )
                 asyncio.create_task(
-                    delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                    delete_interaction_after(
+                        interaction,
+                        ERROR_MESSAGE_AUTO_DELETE_SECONDS,
+                    )
                 )

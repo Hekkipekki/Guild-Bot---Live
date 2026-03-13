@@ -23,16 +23,14 @@
   },
   "1480200690654777466": {
     "guild_name": "Hekkipekkis server",
-    "raid_control_user_ids": [
-      "141881090913599488"
-    ],
+    "raid_control_user_ids": [],
     "expected_players": [
       "141881090913599488"
     ],
     "default_leader": "",
     "default_description": "",
     "weakauras_channel_id": 1480200691938099263,
-    "weakauras_message_id": 1482009295309635725
+    "weakauras_message_id": 1482026147469332560
   },
   "1213272185402167316": {
     "guild_name": "RaJensen's server",

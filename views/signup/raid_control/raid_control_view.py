@@ -3,13 +3,12 @@ import discord
 
 from services.comp.roster_comp_service import analyze_roster_comp
 from services.comp.comp_message_service import post_comp_message
-from views.signup.comp.comp_choice_view import CompChoiceView
-
 from services.raid.raid_control_service import (
     set_player_status,
     remove_player_signup,
 )
 from services.signup.signup_refresh_service import refresh_signup_message_by_id
+from views.signup.comp.comp_choice_view import CompChoiceView
 from views.signup.raid_control.raid_control_components import (
     RaidControlPlayerSelect,
     RaidControlActionSelect,
@@ -44,6 +43,21 @@ async def _send_raid_control_error(
         )
 
 
+async def _refresh_signup_or_error(
+    interaction: discord.Interaction,
+    raid_id: str,
+) -> bool:
+    refreshed = await refresh_signup_message_by_id(interaction.channel, int(raid_id))
+    if refreshed:
+        return True
+
+    await _send_raid_control_error(
+        interaction,
+        "Player updated, but the raid signup no longer exists.",
+    )
+    return False
+
+
 class ChangeSpecRaidControlButton(discord.ui.Button):
     def __init__(self):
         super().__init__(
@@ -54,7 +68,9 @@ class ChangeSpecRaidControlButton(discord.ui.Button):
 
     async def callback(self, interaction: discord.Interaction):
         try:
-            from views.signup.raid_control.raid_control_spec_view import RaidControlSpecPlayerView
+            from views.signup.raid_control.raid_control_spec_view import (
+                RaidControlSpecPlayerView,
+            )
 
             view = self.view
 
@@ -67,6 +83,32 @@ class ChangeSpecRaidControlButton(discord.ui.Button):
             await _send_raid_control_error(
                 interaction,
                 f"Change Spec failed: {type(e).__name__}: {e}",
+            )
+
+
+class RaidSettingsButton(discord.ui.Button):
+    def __init__(self):
+        super().__init__(
+            label="Raid Settings",
+            style=discord.ButtonStyle.secondary,
+            row=2,
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+        try:
+            from views.signup.settings.raid_settings_view import RaidSettingsView
+
+            view = self.view
+
+            await interaction.response.edit_message(
+                content="Raid settings",
+                view=RaidSettingsView(view.raid_id),
+            )
+
+        except Exception as e:
+            await _send_raid_control_error(
+                interaction,
+                f"Raid Settings failed: {type(e).__name__}: {e}",
             )
 
 
@@ -129,7 +171,10 @@ class BuildCompButton(discord.ui.Button):
                     view=None,
                 )
                 asyncio.create_task(
-                    delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                    delete_interaction_after(
+                        interaction,
+                        ERROR_MESSAGE_AUTO_DELETE_SECONDS,
+                    )
                 )
                 return
 
@@ -138,7 +183,10 @@ class BuildCompButton(discord.ui.Button):
                 view=None,
             )
             asyncio.create_task(
-                delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+                delete_interaction_after(
+                    interaction,
+                    RAID_CONTROL_AUTO_DELETE_SECONDS,
+                )
             )
 
         except Exception as e:
@@ -147,30 +195,24 @@ class BuildCompButton(discord.ui.Button):
                 f"Build Comp failed: {type(e).__name__}: {e}",
             )
 
-class RaidSettingsButton(discord.ui.Button):
+
+class CloseRaidControlButton(discord.ui.Button):
     def __init__(self):
         super().__init__(
-            label="Raid Settings",
-            style=discord.ButtonStyle.secondary,
+            label="Close",
+            style=discord.ButtonStyle.danger,
             row=2,
         )
 
     async def callback(self, interaction: discord.Interaction):
-        try:
-            from views.signup.settings.raid_settings_view import RaidSettingsView
+        await interaction.response.edit_message(
+            content="Raid control closed.",
+            view=None,
+        )
+        asyncio.create_task(
+            delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+        )
 
-            view = self.view
-
-            await interaction.response.edit_message(
-                content="Raid settings",
-                view=RaidSettingsView(view.raid_id),
-            )
-
-        except Exception as e:
-            await _send_raid_control_error(
-                interaction,
-                f"Raid Settings failed: {type(e).__name__}: {e}",
-            )
 
 class RaidControlView(discord.ui.View):
     def __init__(self, raid_id: str):
@@ -179,11 +221,17 @@ class RaidControlView(discord.ui.View):
         self.selected_user_id = None
         self.selected_action = None
 
+        # Row 0
         self.add_item(RaidControlPlayerSelect(raid_id))
+
+        # Row 1
         self.add_item(RaidControlActionSelect())
+
+        # Row 2
         self.add_item(ChangeSpecRaidControlButton())
         self.add_item(RaidSettingsButton())
         self.add_item(BuildCompButton())
+        self.add_item(CloseRaidControlButton())
 
     async def try_apply_action(self, interaction: discord.Interaction):
         try:
@@ -209,12 +257,8 @@ class RaidControlView(discord.ui.View):
                 )
                 return
 
-            refreshed = await refresh_signup_message_by_id(interaction.channel, int(self.raid_id))
+            refreshed = await _refresh_signup_or_error(interaction, self.raid_id)
             if not refreshed:
-                await _send_raid_control_error(
-                    interaction,
-                    "Player updated, but the raid signup no longer exists.",
-                )
                 return
 
             self.selected_user_id = None
@@ -225,7 +269,10 @@ class RaidControlView(discord.ui.View):
                 view=RaidControlView(self.raid_id),
             )
             asyncio.create_task(
-                delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
+                delete_interaction_after(
+                    interaction,
+                    RAID_CONTROL_AUTO_DELETE_SECONDS,
+                )
             )
 
         except Exception as e:

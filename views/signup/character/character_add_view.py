@@ -34,7 +34,14 @@ def prettify_character_name(spec: str, wow_class: str) -> str:
 
 
 class AddCharacterClassSelect(discord.ui.Select):
-    def __init__(self, user_id: int, parent_message_id: int, filter_class: str | None = None):
+    def __init__(
+        self,
+        guild_id: int,
+        user_id: int,
+        parent_message_id: int,
+        filter_class: str | None = None,
+    ):
+        self.guild_id = guild_id
         self.user_id = user_id
         self.parent_message_id = parent_message_id
         self.filter_class = filter_class
@@ -62,6 +69,7 @@ class AddCharacterClassSelect(discord.ui.Select):
         await interaction.response.edit_message(
             content=f"Choose a spec for **{selected_class}**:",
             view=AddCharacterSpecView(
+                guild_id=self.guild_id,
                 user_id=self.user_id,
                 parent_message_id=self.parent_message_id,
                 selected_class=selected_class,
@@ -76,11 +84,13 @@ class AddCharacterClassSelect(discord.ui.Select):
 class AddCharacterSpecSelect(discord.ui.Select):
     def __init__(
         self,
+        guild_id: int,
         user_id: int,
         parent_message_id: int,
         selected_class: str,
         filter_class: str | None = None,
     ):
+        self.guild_id = guild_id
         self.user_id = user_id
         self.parent_message_id = parent_message_id
         self.selected_class = selected_class
@@ -116,7 +126,7 @@ class AddCharacterSpecSelect(discord.ui.Select):
             "role": role,
         }
 
-        added = add_user_character(interaction.user.id, char)
+        added = add_user_character(self.guild_id, interaction.user.id, char)
 
         if not added:
             from views.signup.character.character_select_view import CharacterView
@@ -124,6 +134,7 @@ class AddCharacterSpecSelect(discord.ui.Select):
             await interaction.response.edit_message(
                 content=f"⚠ **{char['name']}** is already saved.",
                 view=CharacterView(
+                    self.guild_id,
                     interaction.user.id,
                     self.parent_message_id,
                     filter_class=self.filter_class,
@@ -162,12 +173,19 @@ class AddCharacterSpecSelect(discord.ui.Select):
 
 
 class AddCharacterClassView(discord.ui.View):
-    def __init__(self, user_id: int, parent_message_id: int, preselected_class: str | None = None):
+    def __init__(
+        self,
+        guild_id: int,
+        user_id: int,
+        parent_message_id: int,
+        preselected_class: str | None = None,
+    ):
         super().__init__(timeout=60)
 
         if preselected_class:
             self.add_item(
                 AddCharacterSpecSelect(
+                    guild_id=guild_id,
                     user_id=user_id,
                     parent_message_id=parent_message_id,
                     selected_class=preselected_class,
@@ -177,6 +195,7 @@ class AddCharacterClassView(discord.ui.View):
         else:
             self.add_item(
                 AddCharacterClassSelect(
+                    guild_id,
                     user_id,
                     parent_message_id,
                 )
@@ -184,6 +203,7 @@ class AddCharacterClassView(discord.ui.View):
 
         self.add_item(
             BackToCharacterMenuButton(
+                guild_id,
                 user_id,
                 parent_message_id,
                 filter_class=preselected_class,
@@ -194,6 +214,7 @@ class AddCharacterClassView(discord.ui.View):
 class AddCharacterSpecView(discord.ui.View):
     def __init__(
         self,
+        guild_id: int,
         user_id: int,
         parent_message_id: int,
         selected_class: str,
@@ -202,6 +223,7 @@ class AddCharacterSpecView(discord.ui.View):
         super().__init__(timeout=60)
         self.add_item(
             AddCharacterSpecSelect(
+                guild_id,
                 user_id,
                 parent_message_id,
                 selected_class,
@@ -210,6 +232,7 @@ class AddCharacterSpecView(discord.ui.View):
         )
         self.add_item(
             BackToCharacterMenuButton(
+                guild_id,
                 user_id,
                 parent_message_id,
                 filter_class=filter_class,

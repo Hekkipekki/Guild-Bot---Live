@@ -17,12 +17,19 @@ from views.signup.character.character_manage_view import ManageCharactersView
 
 
 class CharacterSelect(discord.ui.Select):
-    def __init__(self, user_id: int, parent_message_id: int, filter_class: str | None = None):
+    def __init__(
+        self,
+        guild_id: int,
+        user_id: int,
+        parent_message_id: int,
+        filter_class: str | None = None,
+    ):
+        self.guild_id = guild_id
         self.parent_message_id = parent_message_id
         self.user_id = user_id
         self.filter_class = filter_class
 
-        characters = get_user_characters(user_id)
+        characters = get_user_characters(guild_id, user_id)
 
         if filter_class:
             characters = [c for c in characters if c["class"] == filter_class]
@@ -31,8 +38,7 @@ class CharacterSelect(discord.ui.Select):
         options = []
 
         for i, char in enumerate(characters):
-            spec = char["spec"]
-            emoji = parse_spec_emoji(spec)
+            emoji = parse_spec_emoji(char["spec"])
 
             options.append(
                 discord.SelectOption(
@@ -73,49 +79,84 @@ class CharacterSelect(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         value = self.values[0]
 
+        # ADD CHARACTER
         if value == "add":
             await interaction.response.edit_message(
                 content="Choose a class to save as a character:",
                 view=AddCharacterClassView(
+                    self.guild_id,
                     interaction.user.id,
                     self.parent_message_id,
                     preselected_class=self.filter_class,
                 ),
             )
+
             asyncio.create_task(
-                delete_interaction_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+                delete_interaction_after(
+                    interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS
+                )
             )
             return
 
+        # MANAGE CHARACTERS
         if value == "manage":
             await interaction.response.edit_message(
                 content="Manage your saved characters:",
                 view=ManageCharactersView(
+                    self.guild_id,
                     interaction.user.id,
                     self.parent_message_id,
                     filter_class=self.filter_class,
                 ),
             )
+
             asyncio.create_task(
-                delete_interaction_after(interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS)
+                delete_interaction_after(
+                    interaction, CHARACTER_MENU_AUTO_DELETE_SECONDS
+                )
             )
             return
 
-        if int(value) >= len(self.filtered_characters):
+        # SELECT CHARACTER
+        try:
+            index = int(value)
+        except ValueError:
+            await interaction.response.edit_message(
+                content="⚠ Invalid selection.",
+                view=CharacterView(
+                    self.guild_id,
+                    interaction.user.id,
+                    self.parent_message_id,
+                    filter_class=self.filter_class,
+                ),
+            )
+
+            asyncio.create_task(
+                delete_interaction_after(
+                    interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS
+                )
+            )
+            return
+
+        if index >= len(self.filtered_characters):
             await interaction.response.edit_message(
                 content="⚠ Character not found.",
                 view=CharacterView(
+                    self.guild_id,
                     interaction.user.id,
                     self.parent_message_id,
                     filter_class=self.filter_class,
                 ),
             )
+
             asyncio.create_task(
-                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(
+                    interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS
+                )
             )
             return
 
-        char = self.filtered_characters[int(value)]
+        char = self.filtered_characters[index]
 
         ok = set_user_spec(
             raid_id=self.parent_message_id,
@@ -132,8 +173,11 @@ class CharacterSelect(discord.ui.Select):
                 content="⚠ Raid signup no longer exists.",
                 view=None,
             )
+
             asyncio.create_task(
-                delete_interaction_after(interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS)
+                delete_interaction_after(
+                    interaction, ERROR_MESSAGE_AUTO_DELETE_SECONDS
+                )
             )
             return
 
@@ -145,6 +189,20 @@ class CharacterSelect(discord.ui.Select):
 
 
 class CharacterView(discord.ui.View):
-    def __init__(self, user_id: int, parent_message_id: int, filter_class: str | None = None):
+    def __init__(
+        self,
+        guild_id: int,
+        user_id: int,
+        parent_message_id: int,
+        filter_class: str | None = None,
+    ):
         super().__init__(timeout=60)
-        self.add_item(CharacterSelect(user_id, parent_message_id, filter_class=filter_class))
+
+        self.add_item(
+            CharacterSelect(
+                guild_id,
+                user_id,
+                parent_message_id,
+                filter_class=filter_class,
+            )
+        )

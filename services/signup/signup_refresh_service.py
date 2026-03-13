@@ -13,21 +13,32 @@ def _build_signup_embed_for_raid(raid_id: int) -> discord.Embed | None:
 
     title = signup.get("title", "Raid Signup")
     description = signup.get("description", "")
+
     return build_signup_embed(title, description, signup)
 
 
-async def refresh_signup_message(interaction: discord.Interaction, raid_id: int) -> bool:
+async def refresh_signup_message(
+    interaction: discord.Interaction,
+    raid_id: int,
+) -> bool:
     embed = _build_signup_embed_for_raid(raid_id)
+
     if embed is None:
         return False
 
     from views.signup_views import SignupView
 
-    await interaction.message.edit(
-        embed=embed,
-        view=SignupView(str(raid_id)),
-    )
-    return True
+    try:
+        await interaction.message.edit(
+            embed=embed,
+            view=SignupView(str(raid_id)),
+        )
+        return True
+
+    except discord.NotFound:
+        return False
+    except discord.HTTPException:
+        return False
 
 
 async def refresh_signup_message_by_id(
@@ -35,14 +46,25 @@ async def refresh_signup_message_by_id(
     raid_id: int,
 ) -> bool:
     embed = _build_signup_embed_for_raid(raid_id)
+
     if embed is None:
         return False
 
     from views.signup_views import SignupView
 
-    message = await channel.fetch_message(raid_id)
-    await message.edit(
-        embed=embed,
-        view=SignupView(str(raid_id)),
-    )
-    return True
+    try:
+        message = await channel.fetch_message(raid_id)
+
+        await message.edit(
+            embed=embed,
+            view=SignupView(str(raid_id)),
+        )
+
+        return True
+
+    except discord.NotFound:
+        return False
+    except discord.Forbidden:
+        return False
+    except discord.HTTPException:
+        return False

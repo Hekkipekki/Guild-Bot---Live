@@ -24,15 +24,89 @@ class EditRaidTitleButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         await interaction.response.send_modal(EditRaidTitleModal(int(self.raid_id)))
 
-class ToggleRecurringButton(discord.ui.Button):
-    def __init__(self, raid_id):
+
+class EditRaidDescriptionButton(discord.ui.Button):
+    def __init__(self, raid_id: str):
         super().__init__(
-            label="Toggle Recurring",
+            label="Edit Description",
+            style=discord.ButtonStyle.secondary,
+            row=0,
+        )
+        self.raid_id = raid_id
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_modal(EditRaidDescriptionModal(int(self.raid_id)))
+
+
+class EditRaidLeaderButton(discord.ui.Button):
+    def __init__(self, raid_id: str):
+        super().__init__(
+            label="Edit Leader",
+            style=discord.ButtonStyle.secondary,
+            row=0,
+        )
+        self.raid_id = raid_id
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_modal(EditRaidLeaderModal(int(self.raid_id)))
+
+
+class EditRaidDateButton(discord.ui.Button):
+    def __init__(self, raid_id: str):
+        super().__init__(
+            label="Edit Date",
+            style=discord.ButtonStyle.secondary,
+            row=0,
+        )
+        self.raid_id = raid_id
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_modal(EditRaidDateModal(int(self.raid_id)))
+
+
+class EditRaidTimeButton(discord.ui.Button):
+    def __init__(self, raid_id: str):
+        super().__init__(
+            label="Edit Time",
+            style=discord.ButtonStyle.secondary,
+            row=0,
+        )
+        self.raid_id = raid_id
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.send_modal(EditRaidTimeModal(int(self.raid_id)))
+
+
+# -----------------------------
+# RECURRING FLOW
+# -----------------------------
+
+class RecurringOptionsButton(discord.ui.Button):
+    def __init__(self, raid_id: str):
+        super().__init__(
+            label="Recurring Options",
+            style=discord.ButtonStyle.primary,
+            row=1,
+        )
+        self.raid_id = raid_id
+
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.edit_message(
+            content="Recurring raid settings",
+            view=RecurringOptionsView(self.raid_id),
+        )
+
+
+class ToggleRecurringButton(discord.ui.Button):
+    def __init__(self, raid_id: str):
+        super().__init__(
+            label="Enable / Disable Recurring",
             style=discord.ButtonStyle.secondary,
         )
         self.raid_id = raid_id
 
     async def callback(self, interaction: discord.Interaction):
+
         from services.raid.raid_control_service import toggle_recurring
         from services.signup.signup_refresh_service import refresh_signup_message_by_id
 
@@ -49,26 +123,30 @@ class ToggleRecurringButton(discord.ui.Button):
 
         await interaction.response.edit_message(
             content="Recurring setting updated.",
-            view=None,
+            view=RecurringOptionsView(self.raid_id),
         )
+
+
 class RecurringIntervalModal(discord.ui.Modal, title="Set Recurring Interval"):
+
     interval = discord.ui.TextInput(
         label="Interval (days)",
         placeholder="7",
         required=True,
     )
 
-    def __init__(self, raid_id):
+    def __init__(self, raid_id: str):
         super().__init__()
         self.raid_id = raid_id
 
     async def on_submit(self, interaction: discord.Interaction):
+
         from services.raid.raid_control_service import set_recurring_interval
         from services.signup.signup_refresh_service import refresh_signup_message_by_id
 
         try:
             days = int(self.interval.value)
-        except:
+        except ValueError:
             await interaction.response.send_message(
                 "Interval must be a number.",
                 ephemeral=True,
@@ -91,11 +169,13 @@ class RecurringIntervalModal(discord.ui.Modal, title="Set Recurring Interval"):
             ephemeral=True,
         )
 
+
 class SetRecurringIntervalButton(discord.ui.Button):
-    def __init__(self, raid_id):
+
+    def __init__(self, raid_id: str):
         super().__init__(
-            label="Set Recurring Interval",
-            style=discord.ButtonStyle.primary,
+            label="Set Interval",
+            style=discord.ButtonStyle.secondary,
         )
         self.raid_id = raid_id
 
@@ -104,93 +184,78 @@ class SetRecurringIntervalButton(discord.ui.Button):
             RecurringIntervalModal(self.raid_id)
         )
 
-class EditRaidDescriptionButton(discord.ui.Button):
+
+class RecurringOptionsView(discord.ui.View):
+
+    def __init__(self, raid_id: str):
+        super().__init__(timeout=120)
+
+        self.add_item(ToggleRecurringButton(raid_id))
+        self.add_item(SetRecurringIntervalButton(raid_id))
+        self.add_item(BackToRaidSettingsButton(raid_id))
+
+
+class BackToRaidSettingsButton(discord.ui.Button):
+
     def __init__(self, raid_id: str):
         super().__init__(
-            label="Edit Description",
-            style=discord.ButtonStyle.secondary,
-            row=0,
-        )
-        self.raid_id = raid_id
-
-    async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_modal(EditRaidDescriptionModal(int(self.raid_id)))
-
-
-class EditRaidLeaderButton(discord.ui.Button):
-    def __init__(self, raid_id: str):
-        super().__init__(
-            label="Edit Leader",
-            style=discord.ButtonStyle.secondary,
-            row=1,
-        )
-        self.raid_id = raid_id
-
-    async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_modal(EditRaidLeaderModal(int(self.raid_id)))
-
-
-class EditRaidDateButton(discord.ui.Button):
-    def __init__(self, raid_id: str):
-        super().__init__(
-            label="Edit Date",
+            label="Back",
             style=discord.ButtonStyle.secondary,
             row=1,
         )
         self.raid_id = raid_id
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_modal(EditRaidDateModal(int(self.raid_id)))
+
+        await interaction.response.edit_message(
+            content="Raid settings",
+            view=RaidSettingsView(self.raid_id),
+        )
 
 
-class EditRaidTimeButton(discord.ui.Button):
+# -----------------------------
+# MAIN SETTINGS VIEW
+# -----------------------------
+
+class BackToRaidControlButton(discord.ui.Button):
+
     def __init__(self, raid_id: str):
         super().__init__(
-            label="Edit Time",
+            label="Back to Raid Control",
             style=discord.ButtonStyle.secondary,
             row=2,
         )
         self.raid_id = raid_id
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.send_modal(EditRaidTimeModal(int(self.raid_id)))
 
-
-class BackToRaidControlButton(discord.ui.Button):
-    def __init__(self, raid_id: str):
-        super().__init__(
-            label="Back",
-            style=discord.ButtonStyle.primary,
-            row=3,
-        )
-        self.raid_id = raid_id
-
-    async def callback(self, interaction: discord.Interaction):
         from views.signup.raid_control.raid_control_view import RaidControlView
 
         await interaction.response.edit_message(
             content="Raid control panel",
             view=RaidControlView(self.raid_id),
         )
+
         asyncio.create_task(
             delete_interaction_after(interaction, RAID_CONTROL_AUTO_DELETE_SECONDS)
         )
 
 
 class RaidSettingsView(discord.ui.View):
+
     def __init__(self, raid_id: str):
+
         super().__init__(timeout=120)
 
+        # Row 1
         self.add_item(EditRaidTitleButton(raid_id))
         self.add_item(EditRaidDescriptionButton(raid_id))
-
         self.add_item(EditRaidLeaderButton(raid_id))
         self.add_item(EditRaidDateButton(raid_id))
-
         self.add_item(EditRaidTimeButton(raid_id))
 
-        # NEW recurring controls
-        self.add_item(ToggleRecurringButton(raid_id))
-        self.add_item(SetRecurringIntervalButton(raid_id))
+        # Row 2
+        self.add_item(RecurringOptionsButton(raid_id))
 
+        # Row 3
         self.add_item(BackToRaidControlButton(raid_id))
