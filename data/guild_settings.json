@@ -1,10 +1,7 @@
 {
   "1423706462773051542": {
     "raid_control_user_ids": [
-      "141881090913599488",
-      "321966396864987137",
-      "733947209845833730",
-      "248796420880990208"
+      "141881090913599488"
     ],
     "expected_players": [
       "771806222525267968",
@@ -20,6 +17,7 @@
     ],
     "default_leader": "Hekkipekki",
     "default_description": "test",
-    "weakauras_channel_id": 1423733790907306005
+    "weakauras_channel_id": 1423733790907306005,
+    "weakauras_message_id": 1481821816703029339
   }
 }

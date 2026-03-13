@@ -3,7 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 
 from utils.permissions import can_manage_raid_tools
-from views.raid_builder.raid_builder_view import RaidStartView
+from views.raid_builder import RaidStartView
 
 
 class RaidBuilderCommands(commands.Cog):

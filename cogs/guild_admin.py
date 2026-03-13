@@ -9,7 +9,6 @@ from services.guild.guild_settings_service import (
     add_expected_player,
     remove_expected_player,
     get_expected_players,
-    set_default_leader,
     set_default_description,
     get_guild_defaults,
 )
@@ -235,26 +234,6 @@ class GuildAdminCommands(commands.Cog):
             ephemeral=True,
         )
 
-    @raiddefaults.command(name="leader", description="Set the default raid leader text.")
-    async def raiddefaults_leader(
-        self,
-        interaction: discord.Interaction,
-        leader: str,
-    ):
-        if await self._deny_if_not_admin(interaction):
-            return
-
-        guild = await self._get_guild_or_fail(interaction)
-        if guild is None:
-            return
-
-        set_default_leader(guild.id, leader)
-
-        await interaction.response.send_message(
-            f"✅ Default raid leader set to: **{leader}**",
-            ephemeral=True,
-        )
-
     @raiddefaults.command(name="description", description="Set the default raid description text.")
     async def raiddefaults_description(
         self,
@@ -288,7 +267,6 @@ class GuildAdminCommands(commands.Cog):
 
         raid_admins = settings.get("raid_control_user_ids", [])
         raid_team = settings.get("expected_players", [])
-        default_leader = settings.get("default_leader", "") or "-"
         default_description = settings.get("default_description", "") or "-"
         weakauras_channel_id = settings.get("weakauras_channel_id")
 

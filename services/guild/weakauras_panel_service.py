@@ -1,6 +1,10 @@
-from discord.ext import commands
+import discord
 
-from services.guild.guild_settings_service import get_weakauras_channel_id
+from services.guild.guild_settings_service import (
+    get_weakauras_channel_id,
+    get_weakauras_message_id,
+    set_weakauras_message_id,
+)
 from views.raidpack_views import RaidPackView
 
 
@@ -28,41 +32,41 @@ Click *"Dismiss this message"* if it shows an old version, then re-click the but
 """
 
 
-class WACommands(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
+async def ensure_weakauras_panel_for_guild(bot, guild: discord.Guild) -> tuple[bool, str]:
+    channel_id = get_weakauras_channel_id(guild.id)
+    if not channel_id:
+        return False, "No WeakAuras channel configured."
 
-    @commands.command()
-    async def tot(self, ctx: commands.Context):
-        guild = ctx.guild
-        if guild is None:
-            await ctx.send("❌ This command can only be used in a server.")
-            return
+    channel = guild.get_channel(channel_id)
+    if channel is None:
+        try:
+            channel = await guild.fetch_channel(channel_id)
+        except Exception:
+            return False, "Configured WeakAuras channel not found."
 
-        channel_id = get_weakauras_channel_id(guild.id)
-        if not channel_id:
-            await ctx.send(
-                "❌ No WeakAuras channel is configured for this server. "
-                "Use the Guild Admin panel to set one first."
+    message_id = get_weakauras_message_id(guild.id)
+
+    if message_id:
+        try:
+            msg = await channel.fetch_message(message_id)
+            await msg.edit(
+                content=WA_PANEL_TEXT,
+                view=RaidPackView(),
+                suppress=True,
             )
-            return
+            return True, "WeakAuras panel updated."
+        except discord.NotFound:
+            set_weakauras_message_id(guild.id, None)
+        except Exception as e:
+            return False, f"Failed to update existing panel: {e}"
 
-        channel = guild.get_channel(channel_id)
-        if channel is None:
-            try:
-                channel = await guild.fetch_channel(channel_id)
-            except Exception:
-                channel = None
-
-        if channel is None:
-            await ctx.send("❌ Could not find the configured WeakAuras channel.")
-            return
-
-        await channel.send(
+    try:
+        msg = await channel.send(
             content=WA_PANEL_TEXT,
             view=RaidPackView(),
+            suppress_embeds=True,
         )
-
-
-async def setup(bot):
-    await bot.add_cog(WACommands(bot))
+        set_weakauras_message_id(guild.id, msg.id)
+        return True, "WeakAuras panel posted."
+    except Exception as e:
+        return False, f"Failed to post WeakAuras panel: {e}"

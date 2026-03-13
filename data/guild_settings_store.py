@@ -10,8 +10,8 @@ DEFAULT_GUILD_SETTINGS = {
     "default_leader": "",
     "default_description": "",
     "weakauras_channel_id": None,
+    "weakauras_message_id": None,
 }
-
 
 def _ensure_data_dir() -> None:
     DATA_FILE.parent.mkdir(parents=True, exist_ok=True)

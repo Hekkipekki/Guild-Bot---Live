@@ -102,3 +102,19 @@ def get_guild_defaults(guild_id: int) -> dict:
         "default_description": str(settings.get("default_description", "") or ""),
         "weakauras_channel_id": settings.get("weakauras_channel_id"),
     }
+
+def get_weakauras_message_id(guild_id: int) -> int | None:
+    settings = ensure_guild_settings(guild_id)
+    value = settings.get("weakauras_message_id")
+
+    if value in (None, "", 0):
+        return None
+
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def set_weakauras_message_id(guild_id: int, message_id: int | None) -> None:
+    update_guild_settings(guild_id, {"weakauras_message_id": message_id})

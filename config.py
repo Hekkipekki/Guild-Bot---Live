@@ -242,6 +242,10 @@ BUTTON_EMOJIS = {
     "absence": "<:Absence:1481697256657780877>",
     "config": "<:Config:1481697243642724352>",
     "leave": "<:Leave:1481697246507700264>",
+    "create_raid": "<:create_raid:1481807826212094125>",
+    "create_template": "<:create_template:1481807824919986196>",
+    "submit_raid": "<:submit_raid:1481807823548579851>",
+    "cancel_raid": "<:cancel_raid:1481807815550177380>",
 }
 
 DEFAULT_EXPECTED_PLAYERS = [

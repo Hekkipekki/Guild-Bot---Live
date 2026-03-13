@@ -6,6 +6,7 @@ from discord.ext import commands
 
 import config
 from data.signup_store import load_signups
+from services.guild.weakauras_panel_service import ensure_weakauras_panel_for_guild
 from views.raidpack_views import RaidPackView
 from views.signup_views import SignupView
 
@@ -24,6 +25,7 @@ EXTENSIONS = [
     "cogs.reminders",
     "cogs.guild_admin",
     "cogs.raid_builder",
+    "cogs.raid_lifecycle",
 ]
 
 
@@ -71,10 +73,20 @@ async def _load_extensions() -> None:
         await bot.load_extension(extension)
 
 
+async def _ensure_weakauras_panels() -> None:
+    for guild in bot.guilds:
+        try:
+            ok, message = await ensure_weakauras_panel_for_guild(bot, guild)
+            print(f"[WA] {guild.name}: {message}")
+        except Exception as e:
+            print(f"[WA] {guild.name}: failed - {e}")
+
+
 @bot.event
 async def on_ready():
     _register_persistent_views()
     await _sync_guild_commands()
+    await _ensure_weakauras_panels()
     print(f"Logged in as {bot.user}")
 
 
