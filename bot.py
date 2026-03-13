@@ -6,6 +6,7 @@ from discord.ext import commands
 
 import config
 from data.signup_store import load_signups
+from services.guild.guild_settings_service import sync_guild_identity
 from services.guild.weakauras_panel_service import ensure_weakauras_panel_for_guild
 from views.raidpack_views import RaidPackView
 from views.signup_views import SignupView
@@ -65,7 +66,10 @@ async def _sync_guild_commands() -> None:
             # Clear old guild-only commands that may still exist from earlier testing
             bot.tree.clear_commands(guild=guild_obj)
             cleared = await bot.tree.sync(guild=guild_obj)
-            print(f"Cleared guild slash commands for {test_guild_id}. Remaining guild commands: {len(cleared)}")
+            print(
+                f"Cleared guild slash commands for {test_guild_id}. "
+                f"Remaining guild commands: {len(cleared)}"
+            )
 
         # Sync current global commands
         synced = await bot.tree.sync()
@@ -82,6 +86,14 @@ async def _load_extensions() -> None:
         await bot.load_extension(extension)
 
 
+async def _sync_guild_names() -> None:
+    for guild in bot.guilds:
+        try:
+            sync_guild_identity(guild.id, guild.name)
+        except Exception as e:
+            print(f"[Guild Sync] {guild.id}: failed to sync guild name - {e}")
+
+
 async def _ensure_weakauras_panels() -> None:
     for guild in bot.guilds:
         try:
@@ -92,9 +104,55 @@ async def _ensure_weakauras_panels() -> None:
 
 
 @bot.event
+async def on_guild_join(guild: discord.Guild):
+    try:
+        sync_guild_identity(guild.id, guild.name)
+    except Exception as e:
+        print(f"[Guild Join] Failed to store guild name for {guild.id}: {e}")
+
+    embed = discord.Embed(
+        title=f"Thanks for adding Guild Raid Bot to {guild.name}!",
+        description=(
+            "Before using the bot, a server administrator must configure it.\n\n"
+            "**Run:** `/guildadmin`\n\n"
+            "Then configure:\n"
+            "• WeakAuras channel\n"
+            "• Raid admins\n"
+            "• Raid team (optional)\n"
+            "• Raid description template\n\n"
+            "After setup you can create raids with:\n"
+            "`/raid`"
+        ),
+        color=discord.Color.purple(),
+    )
+    embed.set_footer(text="Guild Raid Bot setup")
+
+    me = guild.me
+
+    # Try system channel first
+    channel = guild.system_channel
+    if channel and me and channel.permissions_for(me).send_messages:
+        try:
+            await channel.send(embed=embed)
+            return
+        except Exception as e:
+            print(f"[Guild Join] Failed to send onboarding in system channel for {guild.name}: {e}")
+
+    # Fallback: first available text channel
+    for channel in guild.text_channels:
+        if me and channel.permissions_for(me).send_messages:
+            try:
+                await channel.send(embed=embed)
+                return
+            except Exception:
+                continue
+
+
+@bot.event
 async def on_ready():
     _register_persistent_views()
     await _sync_guild_commands()
+    await _sync_guild_names()
     await _ensure_weakauras_panels()
     print(f"Logged in as {bot.user}")
 

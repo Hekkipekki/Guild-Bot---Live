@@ -34,6 +34,19 @@ def _remove_list_value(guild_id: int, key: str, value: int | str) -> bool:
     return True
 
 
+def get_guild_name(guild_id: int) -> str:
+    settings = ensure_guild_settings(guild_id)
+    return str(settings.get("guild_name", "") or "")
+
+
+def set_guild_name(guild_id: int, guild_name: str) -> None:
+    update_guild_settings(guild_id, {}, guild_name=guild_name.strip())
+
+
+def sync_guild_identity(guild_id: int, guild_name: str) -> None:
+    ensure_guild_settings(guild_id, guild_name=guild_name.strip())
+
+
 def get_raid_control_users(guild_id: int) -> list[str]:
     return _get_list_setting(guild_id, "raid_control_user_ids")
 
@@ -96,12 +109,14 @@ def set_weakauras_channel_id(guild_id: int, channel_id: int | None) -> None:
 def get_guild_defaults(guild_id: int) -> dict:
     settings = ensure_guild_settings(guild_id)
     return {
+        "guild_name": str(settings.get("guild_name", "") or ""),
         "raid_control_user_ids": [str(x) for x in settings.get("raid_control_user_ids", [])],
         "expected_players": [str(x) for x in settings.get("expected_players", [])],
         "default_leader": str(settings.get("default_leader", "") or ""),
         "default_description": str(settings.get("default_description", "") or ""),
         "weakauras_channel_id": settings.get("weakauras_channel_id"),
     }
+
 
 def get_weakauras_message_id(guild_id: int) -> int | None:
     settings = ensure_guild_settings(guild_id)
